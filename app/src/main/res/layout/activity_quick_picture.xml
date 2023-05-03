@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".QuickPicture"
+    android:padding="20dp">
+    <Button
+        android:id="@+id/previous_main"
+        android:layout_width="100dp"
+        android:layout_height="48dp"
+        android:text="Categories"
+        android:textColor="@color/black"
+        android:textSize="10sp"
+        android:layout_margin="15dp"
+        android:background="#FFBF40"/>
+
+    <ImageView
+        android:id="@+id/quickPictureImage"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:adjustViewBounds="true"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/ic_baseline_image_24" />
+
+    <Button
+        android:id="@+id/captureImage"
+        android:layout_width="300dp"
+        android:layout_height="70dp"
+        android:layout_gravity="center_horizontal"
+        android:text="Capture Image"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:hint="Enter text">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/textNote"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapSentences|textMultiLine"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/shareImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Share Image" />
+
+    <Button
+        android:id="@+id/shareText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Share Text"/>
+
+    <Button
+        android:id="@+id/shareTextPicture"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Share Text &amp; Image"/>
+
+</LinearLayout>

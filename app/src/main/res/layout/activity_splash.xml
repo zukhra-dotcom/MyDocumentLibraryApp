@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".SplashActivity">
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginBottom="30dp"
+        android:src="@drawable/logo"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="MyDocumentLibraryApp"
+        android:textSize="28sp"
+        android:textColor="#ffffff"
+        android:textStyle="bold"
+        android:gravity="center"/>
+
+    <ProgressBar
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:id="@+id/progressBar"
+        android:layout_margin="10dp"
+        android:indeterminateTint="@color/white"
+        android:gravity="center"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Store, Share and Access Anytime
+           Your and Friends` Documents at Your Fingertips!"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:layout_margin="50dp" />
+
+</LinearLayout>
