@@ -20,6 +20,7 @@ import com.example.mydocumentlibrary.PutPDF;
 import com.example.mydocumentlibrary.R;
 import com.example.mydocumentlibrary.categories.EducationPage;
 import com.example.mydocumentlibrary.categories.PersonalPage;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,11 +36,16 @@ public class FetchEducationFiles extends AppCompatActivity {
     DatabaseReference databaseReference;
     List<PutPDF> uploadedPDF;
     private Button moveToEducationPage;
+    private String userID;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fetch_education_files);
+
+        //Added 08.05.2023 to store data for each users
+        userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         moveToEducationPage = findViewById(R.id.previous_page);
         moveToEducationPage.setOnClickListener(new View.OnClickListener() {
@@ -69,9 +75,13 @@ public class FetchEducationFiles extends AppCompatActivity {
 
     private void retrievePDFFiles() {
         databaseReference = FirebaseDatabase.getInstance().getReference("uploadEducational");
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        databaseReference.child(userID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                //Added 08.05.2023 to store data for each users
+                uploadedPDF.clear();
+
                 for(DataSnapshot ds:snapshot.getChildren()){
                     PutPDF putPDF = ds.getValue(com.example.mydocumentlibrary.PutPDF.class);
                     uploadedPDF.add(putPDF);

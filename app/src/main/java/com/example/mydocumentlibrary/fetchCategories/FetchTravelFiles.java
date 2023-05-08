@@ -20,6 +20,7 @@ import com.example.mydocumentlibrary.PutPDF;
 import com.example.mydocumentlibrary.R;
 import com.example.mydocumentlibrary.categories.SecretsPage;
 import com.example.mydocumentlibrary.categories.TravelPage;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,11 +36,15 @@ public class FetchTravelFiles extends AppCompatActivity {
     DatabaseReference databaseReference;
     List<PutPDF> uploadedPDF;
     private Button moveToTravelPage;
+    private String userID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fetch_travel_files);
+
+        //Added 08.05.2023 to store data for each users
+        userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         moveToTravelPage = findViewById(R.id.previous_page);
         moveToTravelPage.setOnClickListener(new View.OnClickListener() {
@@ -69,9 +74,12 @@ public class FetchTravelFiles extends AppCompatActivity {
 
     private void retrievePDFFiles() {
         databaseReference = FirebaseDatabase.getInstance().getReference("uploadTravel");
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        databaseReference.child(userID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                //Added 08.05.2023 to store data for each users
+                uploadedPDF.clear();
+
                 for(DataSnapshot ds:snapshot.getChildren()){
                     PutPDF putPDF = ds.getValue(com.example.mydocumentlibrary.PutPDF.class);
                     uploadedPDF.add(putPDF);

@@ -3,11 +3,11 @@ package com.example.mydocumentlibrary.fetchCategories;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -15,18 +15,17 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.example.mydocumentlibrary.MainActivity;
 import com.example.mydocumentlibrary.PutPDF;
 import com.example.mydocumentlibrary.R;
 import com.example.mydocumentlibrary.categories.PersonalPage;
-import com.google.firebase.FirebaseOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,12 +35,17 @@ public class FetchPersonalFiles extends AppCompatActivity {
     DatabaseReference databaseReference;
     List<PutPDF> uploadedPDF;
     private Button moveToPersonalPage;
+    //Added 08.05.2023 to store data for each users
+    private String userID;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fetch_personal_files);
+
+        //Added 08.05.2023 to store data for each users
+        userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         moveToPersonalPage = findViewById(R.id.previous_page);
         moveToPersonalPage.setOnClickListener(new View.OnClickListener() {
@@ -80,9 +84,14 @@ public class FetchPersonalFiles extends AppCompatActivity {
 
     private void retrievePDFFiles() {
         databaseReference = FirebaseDatabase.getInstance().getReference("uploadPersonal");
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        //.child(userID) added
+        databaseReference.child(userID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                //Added 08.05.2023 to store data for each users
+                uploadedPDF.clear();
+
                 for(DataSnapshot ds:snapshot.getChildren()){
                     PutPDF putPDF = ds.getValue(com.example.mydocumentlibrary.PutPDF.class);
                     uploadedPDF.add(putPDF);

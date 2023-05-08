@@ -24,6 +24,7 @@ import com.example.mydocumentlibrary.PutPDF;
 import com.example.mydocumentlibrary.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -41,11 +42,17 @@ public class FriendsPage extends AppCompatActivity {
     Button uploadPDF;
     StorageReference storageReference;
     DatabaseReference databaseReference;
+    private String userID;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends_page);
+
+        //08.05.2023 12:24
+        Intent intent = getIntent();
+        userID = intent.getStringExtra("USER_ID");
 
         moveToMain = findViewById(R.id.previous_main);
         moveToMain.setOnClickListener(new View.OnClickListener() {
@@ -99,7 +106,10 @@ public class FriendsPage extends AppCompatActivity {
         progressDialog.setTitle("File is loading...");
         progressDialog.show();
 
-        StorageReference reference = storageReference.child("uploadFriends" + System.currentTimeMillis() + ".pdf");
+        //Store the document for each users
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        StorageReference reference = storageReference.child("friend/" + uid + "/" + "friend" + System.currentTimeMillis() + ".file");
         reference.putFile(data)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
@@ -109,8 +119,11 @@ public class FriendsPage extends AppCompatActivity {
                         Uri uri = uriTask.getResult();
 
                         PutPDF putPDF = new PutPDF(selectPDF.getText().toString(), uri.toString());
-                        databaseReference.child(databaseReference.push().getKey()).setValue(putPDF);
-                        Toast.makeText(FriendsPage.this, "PDF File is uploaded", Toast.LENGTH_LONG).show();
+
+                        //New code 08.05.2023 to store for each users here UID is as a key
+                        databaseReference.child(uid).push().setValue(putPDF);
+
+                        Toast.makeText(FriendsPage.this, "File is uploaded", Toast.LENGTH_LONG).show();
                         progressDialog.dismiss();
 
                     }

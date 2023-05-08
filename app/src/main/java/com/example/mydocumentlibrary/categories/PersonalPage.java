@@ -22,6 +22,7 @@ import com.example.mydocumentlibrary.PutPDF;
 import com.example.mydocumentlibrary.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -39,11 +40,17 @@ public class PersonalPage extends AppCompatActivity {
     Button uploadPDF;
     StorageReference storageReference;
     DatabaseReference databaseReference;
+    private String userID;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personal_page);
+
+        //08.05.2023 12:24
+        Intent intent = getIntent();
+        userID = intent.getStringExtra("USER_ID");
 
         moveToMain = findViewById(R.id.previous_main);
         moveToMain.setOnClickListener(new View.OnClickListener() {
@@ -57,7 +64,7 @@ public class PersonalPage extends AppCompatActivity {
         selectPDF = findViewById(R.id.selectFile);
         uploadPDF = findViewById(R.id.uploadFile);
         storageReference = FirebaseStorage.getInstance().getReference();
-        databaseReference = FirebaseDatabase.getInstance().getReference("uploadPersonal");
+        databaseReference = FirebaseDatabase.getInstance().getReference("uploadPersonal/");
 
         uploadPDF.setEnabled(false);
 
@@ -97,7 +104,11 @@ public class PersonalPage extends AppCompatActivity {
         progressDialog.setTitle("File is loading...");
         progressDialog.show();
 
-        StorageReference reference = storageReference.child("personal" + System.currentTimeMillis() + ".pdf");
+        //Store the document for each users
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+
+        StorageReference reference = storageReference.child("personal/" + uid + "/" + "personal" + System.currentTimeMillis() + ".file");
         reference.putFile(data)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
@@ -107,8 +118,13 @@ public class PersonalPage extends AppCompatActivity {
                         Uri uri = uriTask.getResult();
 
                         PutPDF putPDF = new PutPDF(selectPDF.getText().toString(), uri.toString());
-                        databaseReference.child(databaseReference.push().getKey()).setValue(putPDF);
-                        Toast.makeText(PersonalPage.this, "PDF File is uploaded", Toast.LENGTH_LONG).show();
+
+                        //New code 08.05.2023 to store for each users here UID is as a key
+                        databaseReference.child(uid).push().setValue(putPDF);
+
+                        //it was before 08.05.2023. so in the top I added to store for each users
+//                        databaseReference.child(databaseReference.push().getKey()).setValue(putPDF);
+                        Toast.makeText(PersonalPage.this, "File is uploaded", Toast.LENGTH_LONG).show();
                         progressDialog.dismiss();
 
                     }

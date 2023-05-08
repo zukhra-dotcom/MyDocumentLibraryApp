@@ -20,6 +20,7 @@ import com.example.mydocumentlibrary.PutPDF;
 import com.example.mydocumentlibrary.R;
 import com.example.mydocumentlibrary.categories.BillsPage;
 import com.example.mydocumentlibrary.categories.PersonalPage;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,13 +35,15 @@ public class FetchBillsFiles extends AppCompatActivity {
     ListView listView;
     DatabaseReference databaseReference;
     List<PutPDF> uploadedPDF;
-
     private Button moveToBillsPage;
-
+    private String userID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fetch_bills_files);
+
+        //Added 08.05.2023 to store data for each users
+        userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         moveToBillsPage = findViewById(R.id.previous_page);
         moveToBillsPage.setOnClickListener(new View.OnClickListener() {
@@ -69,10 +72,13 @@ public class FetchBillsFiles extends AppCompatActivity {
     }
 
     private void retrievePDFFiles() {
-        databaseReference = FirebaseDatabase.getInstance().getReference("uploadBills");
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        databaseReference = FirebaseDatabase.getInstance().getReference("uploadBill");
+        databaseReference.child(userID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                //Added 08.05.2023 to store data for each users
+                uploadedPDF.clear();
+
                 for(DataSnapshot ds:snapshot.getChildren()){
                     PutPDF putPDF = ds.getValue(com.example.mydocumentlibrary.PutPDF.class);
                     uploadedPDF.add(putPDF);
