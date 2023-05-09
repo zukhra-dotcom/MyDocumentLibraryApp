@@ -4,13 +4,68 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".Account">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/user_email_title"
+        android:text="Email:"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        android:padding="10dp"
+        android:gravity="center"
+        android:layout_margin="20dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/user_email"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        android:padding="10dp"
+        android:gravity="center"
+        android:layout_margin="50dp"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/findFriends_button"
+        android:layout_marginTop="20dp"
+        android:text="Find Friends"
+        android:layout_below="@+id/user_email"/>
+
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="This is Account Page"
         android:gravity="center" />
+
+    <Button
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/logout_button"
+        android:text="Logout"
+        android:backgroundTint="@color/black"
+        android:gravity="center"
+        android:drawableLeft="@drawable/baseline_logout_24"
+        android:drawablePadding="8dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="500dp"/>
+
+    <Button
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/delete_account_button"
+        android:text="Delete Account"
+        android:backgroundTint="#FF0000"
+        android:gravity="center"
+        android:drawablePadding="8dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="550dp"/>
+
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:layout_width="match_parent"

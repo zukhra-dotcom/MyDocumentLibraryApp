@@ -17,9 +17,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 public class SignUpActivity extends AppCompatActivity {
-
     private FirebaseAuth firebaseAuth;
     private EditText signupEmail, signupPassword;
     private Button signupButton;
@@ -71,4 +73,5 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
     }
+
 }
