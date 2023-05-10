@@ -18,7 +18,5 @@ public class FindFriendViewHolder extends RecyclerView.ViewHolder {
 
 
 
-
-
     }
 }

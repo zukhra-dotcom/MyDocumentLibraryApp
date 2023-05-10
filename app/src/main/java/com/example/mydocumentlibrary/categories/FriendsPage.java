@@ -3,6 +3,9 @@ package com.example.mydocumentlibrary.categories;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.app.ProgressDialog;
@@ -13,36 +16,43 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.mydocumentlibrary.FindFriendViewHolder;
+import com.example.mydocumentlibrary.Friends;
 import com.example.mydocumentlibrary.fetchCategories.FetchFriendsFiles;
 import com.example.mydocumentlibrary.MainActivity;
 import com.example.mydocumentlibrary.PutPDF;
 import com.example.mydocumentlibrary.R;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 public class FriendsPage extends AppCompatActivity {
-    private static final int PERMISSION_CODE = 1000;
-    private static final int IMAGE_CAPTURE_CODE = 1001;
 
-    Uri imageUri;
     private Button moveToMain;
-    EditText selectPDF;
-    Button uploadPDF;
-    StorageReference storageReference;
+    RecyclerView recyclerView;
+    FirebaseRecyclerOptions<Friends>options;
+    FirebaseRecyclerAdapter<Friends, FriendMyViewHolder>adapter;
+    FirebaseAuth firebaseAuth;
     DatabaseReference databaseReference;
-    private String userID;
+    FirebaseUser firebaseUser;
+
 
 
     @Override
@@ -50,9 +60,13 @@ public class FriendsPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends_page);
 
-        //08.05.2023 12:24
-        Intent intent = getIntent();
-        userID = intent.getStringExtra("USER_ID");
+        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("Friends");
+
+        LoadFriends("");
 
         moveToMain = findViewById(R.id.previous_main);
         moveToMain.setOnClickListener(new View.OnClickListener() {
@@ -62,113 +76,26 @@ public class FriendsPage extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
 
-        selectPDF = findViewById(R.id.selectFile);
-        uploadPDF = findViewById(R.id.uploadFile);
-        storageReference = FirebaseStorage.getInstance().getReference();
-        databaseReference = FirebaseDatabase.getInstance().getReference("uploadFriends");
-
-        uploadPDF.setEnabled(false);
-
-        selectPDF.setOnClickListener(new View.OnClickListener() {
+    private void LoadFriends(String s) {
+        Query query = databaseReference.child(firebaseUser.getUid()).orderByChild("email").startAt(s).endAt(s + "\uf8ff");
+        options = new FirebaseRecyclerOptions.Builder<Friends>().setQuery(query, Friends.class).build();
+        adapter = new FirebaseRecyclerAdapter<Friends, FriendMyViewHolder>(options) {
             @Override
-            public void onClick(View v) {
-                selectPDFFile();
+            protected void onBindViewHolder(@NonNull FriendMyViewHolder holder, int position, @NonNull Friends model) {
+                holder.email.setText(model.getEmail());
+                holder.uid.setText(model.getUid());
             }
-        });
-    }
 
-    private void selectPDFFile() {
-        Intent intent = new Intent();
-        intent.setType("application/pdf");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "PDF file selected"), 12);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==12 && resultCode==RESULT_OK && data!=null && data.getData()!=null){
-            uploadPDF.setEnabled(true);
-            selectPDF.setText(data.getDataString()
-                    .substring(data.getDataString().lastIndexOf("/") + 1));
-            uploadPDF.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    uploadPDFFile(data.getData());
-                }
-            });
-        }
-    }
-
-    private void uploadPDFFile(Uri data) {
-        final ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("File is loading...");
-        progressDialog.show();
-
-        //Store the document for each users
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-        StorageReference reference = storageReference.child("friend/" + uid + "/" + "friend" + System.currentTimeMillis() + ".file");
-        reference.putFile(data)
-                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                        while (!uriTask.isComplete());
-                        Uri uri = uriTask.getResult();
-
-                        PutPDF putPDF = new PutPDF(selectPDF.getText().toString(), uri.toString());
-
-                        //New code 08.05.2023 to store for each users here UID is as a key
-                        databaseReference.child(uid).push().setValue(putPDF);
-
-                        Toast.makeText(FriendsPage.this, "File is uploaded", Toast.LENGTH_LONG).show();
-                        progressDialog.dismiss();
-
-                    }
-                }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
-                        double progress = (100.0 * snapshot.getBytesTransferred()/snapshot.getTotalByteCount());
-                        progressDialog.setMessage("File is uploading..." + (int) progress + "%");
-                    }
-                });
-    }
-
-    //check permissions of camera button
-    public void check(View view){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            if(checkSelfPermission(Manifest.permission.CAMERA)==
-                    PackageManager.PERMISSION_DENIED || checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)==
-                    PackageManager.PERMISSION_DENIED)
-            {
-                String[] permission = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                requestPermissions(permission, PERMISSION_CODE);
+            @NonNull
+            @Override
+            public FriendMyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.single_view_friend, parent, false);
+                return new FriendMyViewHolder(view);
             }
-            else{
-                OpenCamera();
-            }
-        }
-        else{
-            OpenCamera();
-        }
-    }
-
-    //Method to use camera
-    private void OpenCamera() {
-
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.TITLE, "New Image");
-        values.put(MediaStore.Images.Media.DESCRIPTION, "from the camera");
-        imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-        startActivityForResult(cameraIntent, IMAGE_CAPTURE_CODE);
-    }
-
-    public void fetchFile(View view) {
-        startActivity(new Intent(getApplicationContext(), FetchFriendsFiles.class));
+        };
+        adapter.startListening();
+        recyclerView.setAdapter(adapter);
     }
 }

@@ -4,6 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,7 +47,7 @@ public class FindFriendActivity extends AppCompatActivity {
         options = new FirebaseRecyclerOptions.Builder<Users>().setQuery(query, Users.class).build();
         adapter = new FirebaseRecyclerAdapter<Users, FindFriendViewHolder>(options) {
             @Override
-            protected void onBindViewHolder(@NonNull FindFriendViewHolder holder, int position, @NonNull Users model) {
+            protected void onBindViewHolder(@NonNull FindFriendViewHolder holder, @SuppressLint("RecyclerView") int position, @NonNull Users model) {
                 if(!firebaseUser.getUid().equals(getRef(position).getKey().toString())){
                     holder.userEmail.setText(model.getEmail());
                     holder.userID.setText(model.getUid());
@@ -52,6 +55,14 @@ public class FindFriendActivity extends AppCompatActivity {
                     holder.itemView.setVisibility(View.GONE);
                     holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(0,0));
                 }
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(FindFriendActivity.this, ViewFriendActvity.class);
+                        intent.putExtra("userKey", getRef(position).getKey().toString());
+                        startActivity(intent);
+                    }
+                });
             }
 
             @NonNull
