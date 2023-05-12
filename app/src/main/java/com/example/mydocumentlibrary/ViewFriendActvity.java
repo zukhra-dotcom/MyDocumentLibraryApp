@@ -29,7 +29,7 @@ public class ViewFriendActvity extends AppCompatActivity {
     TextView email, uid;
     Button btnPerform, btnDecline;
     String CurrentState = "nothing_happen";
-//    String myUserEmail, myUserID;
+    String myUserEmail, myUserID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -165,7 +165,6 @@ public class ViewFriendActvity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
             }
         });
         requestRef.child(userID).child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
@@ -236,7 +235,7 @@ public class ViewFriendActvity extends AppCompatActivity {
                         hashMap.put("status", "friend");
                         hashMap.put("email", userEmail);
                         hashMap.put("uid", userID);
-
+//
 //                        final HashMap hashMap1 = new HashMap();
 //                        hashMap1.put("status", "friend");
 //                        hashMap1.put("email", myUserEmail);
@@ -299,6 +298,7 @@ public class ViewFriendActvity extends AppCompatActivity {
 //                if(snapshot.exists()){
 //                    myUserEmail = snapshot.child("email").getValue().toString();
 //                    myUserID = snapshot.child("uid").getValue().toString();
+//
 //                } else{
 //                    Toast.makeText(ViewFriendActvity.this, "Data not found", Toast.LENGTH_SHORT).show();
 //                }

@@ -53,8 +53,6 @@ public class FriendsPage extends AppCompatActivity {
     DatabaseReference databaseReference;
     FirebaseUser firebaseUser;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

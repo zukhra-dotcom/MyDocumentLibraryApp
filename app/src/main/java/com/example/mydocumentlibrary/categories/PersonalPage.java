@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import android.Manifest;
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -14,7 +15,9 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.example.mydocumentlibrary.fetchCategories.FetchPersonalFiles;
 import com.example.mydocumentlibrary.MainActivity;
@@ -29,6 +32,12 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+
 public class PersonalPage extends AppCompatActivity {
 
     private static final int PERMISSION_CODE = 1000;
@@ -36,8 +45,10 @@ public class PersonalPage extends AppCompatActivity {
 
     Uri imageUri;
     private Button moveToMain;
-    EditText selectPDF;
-    Button uploadPDF;
+    EditText selectPDF, writeNote;
+    TextView showDeadlineText, createdDateText;
+    int y, m, d;
+    Button uploadPDF, createDeadline;
     StorageReference storageReference;
     DatabaseReference databaseReference;
     private String userID;
@@ -48,7 +59,6 @@ public class PersonalPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personal_page);
 
-        //08.05.2023 12:24
         Intent intent = getIntent();
         userID = intent.getStringExtra("USER_ID");
 
@@ -63,10 +73,15 @@ public class PersonalPage extends AppCompatActivity {
 
         selectPDF = findViewById(R.id.selectFile);
         uploadPDF = findViewById(R.id.uploadFile);
+        writeNote = findViewById(R.id.writeNoteFile);
+        createDeadline = findViewById(R.id.createDeadlineFile);
+        showDeadlineText = findViewById(R.id.showDeadlineText);
         storageReference = FirebaseStorage.getInstance().getReference();
         databaseReference = FirebaseDatabase.getInstance().getReference("uploadPersonal/");
 
         uploadPDF.setEnabled(false);
+        createDeadline.setEnabled(false);
+        showDeadlineText.setVisibility(View.GONE);
 
         selectPDF.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,6 +103,35 @@ public class PersonalPage extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode==12 && resultCode==RESULT_OK && data!=null && data.getData()!=null){
             uploadPDF.setEnabled(true);
+            createDeadline.setEnabled(true);
+            showDeadlineText.setVisibility(View.VISIBLE);
+            createDeadline.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final Calendar calendar = Calendar.getInstance();
+                    y = calendar.get(Calendar.YEAR);
+                    m = calendar.get(Calendar.MONTH);
+                    d = calendar.get(Calendar.DAY_OF_MONTH);
+                    DatePickerDialog datePickerDialog = new DatePickerDialog(PersonalPage.this, new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                            //checking if selected date from the calendar is after today`s date
+                            Calendar selectedCalendar = Calendar.getInstance();
+                            selectedCalendar.set(Calendar.YEAR, year);
+                            selectedCalendar.set(Calendar.MONTH, month);
+                            selectedCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                            if(selectedCalendar.before(calendar)){
+                                Toast.makeText(PersonalPage.this, "Please select a date on or after today", Toast.LENGTH_SHORT).show();
+                            } else {
+                                showDeadlineText.setText(dayOfMonth + "." + month + "." + year);
+                            }
+                        }
+                    }, y, m, d);
+                    datePickerDialog.show();
+                }
+            });
+
             selectPDF.setText(data.getDataString()
                     .substring(data.getDataString().lastIndexOf("/") + 1));
             uploadPDF.setOnClickListener(new View.OnClickListener() {
@@ -107,7 +151,6 @@ public class PersonalPage extends AppCompatActivity {
         //Store the document for each users
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-
         StorageReference reference = storageReference.child("personal/" + uid + "/" + "personal" + System.currentTimeMillis() + ".file");
         reference.putFile(data)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -117,7 +160,12 @@ public class PersonalPage extends AppCompatActivity {
                         while (!uriTask.isComplete());
                         Uri uri = uriTask.getResult();
 
-                        PutPDF putPDF = new PutPDF(selectPDF.getText().toString(), uri.toString());
+                        //While uploading new file identify uploadDate
+                        Date date = new Date();
+                        SimpleDateFormat formatter = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
+                        String strDate = formatter.format(date);
+
+                        PutPDF putPDF = new PutPDF(selectPDF.getText().toString(), uri.toString(), writeNote.getText().toString(), strDate, showDeadlineText.getText().toString(), 0, true, true);
 
                         //New code 08.05.2023 to store for each users here UID is as a key
                         databaseReference.child(uid).push().setValue(putPDF);
@@ -173,14 +221,4 @@ public class PersonalPage extends AppCompatActivity {
         startActivity(new Intent(getApplicationContext(), FetchPersonalFiles.class));
     }
 
-    //same methods onActivityResult
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if(resultCode==RESULT_OK){
-//            Intent i = new Intent(PersonalPage.this, ScanActivity.class);
-//            i.setData(imageUri);
-//            startActivity(i);
-//        }
-//    }
 }

@@ -1,6 +1,8 @@
 package com.example.mydocumentlibrary.categories;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 
 import com.example.mydocumentlibrary.fetchCategories.FetchEducationFiles;
@@ -17,7 +19,9 @@ import android.os.Build;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mydocumentlibrary.MainActivity;
@@ -32,6 +36,10 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 public class EducationPage extends AppCompatActivity {
 
     private static final int PERMISSION_CODE = 1000;
@@ -39,8 +47,10 @@ public class EducationPage extends AppCompatActivity {
 
     Uri imageUri;
     private Button moveToMain;
-    EditText selectPDF;
-    Button uploadPDF;
+    EditText selectPDF, writeNote;
+    TextView showDeadlineText;
+    int y, m, d;
+    Button uploadPDF, createDeadline;
     StorageReference storageReference;
     DatabaseReference databaseReference;
     private String userID;
@@ -50,7 +60,6 @@ public class EducationPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_education_page);
 
-        //08.05.2023 12:24
         Intent intent = getIntent();
         userID = intent.getStringExtra("USER_ID");
 
@@ -65,10 +74,15 @@ public class EducationPage extends AppCompatActivity {
 
         selectPDF = findViewById(R.id.selectFile);
         uploadPDF = findViewById(R.id.uploadFile);
+        writeNote = findViewById(R.id.writeNoteFile);
+        createDeadline = findViewById(R.id.createDeadlineFile);
+        showDeadlineText = findViewById(R.id.showDeadlineText);
         storageReference = FirebaseStorage.getInstance().getReference();
         databaseReference = FirebaseDatabase.getInstance().getReference("uploadEducational/");
 
         uploadPDF.setEnabled(false);
+        createDeadline.setEnabled(false);
+        showDeadlineText.setVisibility(View.GONE);
 
         selectPDF.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,6 +104,35 @@ public class EducationPage extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode==12 && resultCode==RESULT_OK && data!=null && data.getData()!=null){
             uploadPDF.setEnabled(true);
+            createDeadline.setEnabled(true);
+            showDeadlineText.setVisibility(View.VISIBLE);
+            createDeadline.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final Calendar calendar = Calendar.getInstance();
+                    y = calendar.get(Calendar.YEAR);
+                    m = calendar.get(Calendar.MONTH);
+                    d = calendar.get(Calendar.DAY_OF_MONTH);
+                    DatePickerDialog datePickerDialog = new DatePickerDialog(EducationPage.this, new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                            //checking if selected date from the calendar is after today`s date
+                            Calendar selectedCalendar = Calendar.getInstance();
+                            selectedCalendar.set(Calendar.YEAR, year);
+                            selectedCalendar.set(Calendar.MONTH, month);
+                            selectedCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                            if(selectedCalendar.before(calendar)){
+                                Toast.makeText(EducationPage.this, "Please select a date on or after today", Toast.LENGTH_SHORT).show();
+                            } else {
+                                showDeadlineText.setText(dayOfMonth + "." + month + "." + year);
+                            }
+                        }
+                    }, y, m, d);
+                    datePickerDialog.show();
+                }
+            });
+
             selectPDF.setText(data.getDataString()
                     .substring(data.getDataString().lastIndexOf("/") + 1));
             uploadPDF.setOnClickListener(new View.OnClickListener() {
@@ -109,7 +152,6 @@ public class EducationPage extends AppCompatActivity {
         //Store the document for each users
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-
         StorageReference reference = storageReference.child("educational/" + uid + "/" + "educational" + System.currentTimeMillis() + ".file");
         reference.putFile(data)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -119,9 +161,14 @@ public class EducationPage extends AppCompatActivity {
                         while (!uriTask.isComplete());
                         Uri uri = uriTask.getResult();
 
-                        PutPDF putPDF = new PutPDF(selectPDF.getText().toString(), uri.toString());
+                        //While uploading new file identify uploadDate
+                        Date date = new Date();
+                        SimpleDateFormat formatter = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
+                        String strDate = formatter.format(date);
 
-                        //New code 08.05.2023 to store for each users here UID is as a key
+                        PutPDF putPDF = new PutPDF(selectPDF.getText().toString(), uri.toString(), writeNote.getText().toString(), strDate, showDeadlineText.getText().toString(), 0, true, true);
+
+                        //To store for each users here UID is as a key
                         databaseReference.child(uid).push().setValue(putPDF);
 
                         Toast.makeText(EducationPage.this, "PDF File is uploaded", Toast.LENGTH_LONG).show();
