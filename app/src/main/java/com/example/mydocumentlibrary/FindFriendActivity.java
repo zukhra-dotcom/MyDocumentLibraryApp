@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Spinner;
+
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,6 +28,8 @@ public class FindFriendActivity extends AppCompatActivity {
     DatabaseReference databaseReference;
     FirebaseUser firebaseUser;
     RecyclerView recyclerView;
+
+    //relationship xml id not in this class
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +55,7 @@ public class FindFriendActivity extends AppCompatActivity {
                 if(!firebaseUser.getUid().equals(getRef(position).getKey().toString())){
                     holder.userEmail.setText(model.getEmail());
                     holder.userID.setText(model.getUid());
+
                 } else{
                     holder.itemView.setVisibility(View.GONE);
                     holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(0,0));

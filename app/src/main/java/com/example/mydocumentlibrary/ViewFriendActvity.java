@@ -117,7 +117,7 @@ public class ViewFriendActvity extends AppCompatActivity {
                 if(snapshot.exists()){
                     //means we already friends (1)
                     CurrentState = "friend";
-                    btnPerform.setText("Send SMS");
+                    btnPerform.setText("View Docs");
                     btnDecline.setText("Unfriend");
                     btnDecline.setVisibility(View.VISIBLE);
                 }
@@ -134,9 +134,11 @@ public class ViewFriendActvity extends AppCompatActivity {
                 if(snapshot.exists()){
                     //means we already friends (2)
                     CurrentState = "friend";
-                    btnPerform.setText("Send SMS");
+                    btnPerform.setText("View Docs");
                     btnDecline.setText("Unfriend");
                     btnDecline.setVisibility(View.VISIBLE);
+
+
                 }
             }
 
@@ -251,7 +253,7 @@ public class ViewFriendActvity extends AppCompatActivity {
                                         public void onComplete(@NonNull Task task) {
                                             Toast.makeText(ViewFriendActvity.this, "You added friend", Toast.LENGTH_SHORT).show();
                                             CurrentState = "friend";
-                                            btnPerform.setText("Send SMS");
+                                            btnPerform.setText("View Docs");
                                             btnDecline.setText("Unfriend");
                                             btnDecline.setVisibility(View.VISIBLE);
                                         }

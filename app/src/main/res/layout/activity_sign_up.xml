@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/vanilla"
+
     android:gravity="center"
     tools:context=".authentication.SignUpActivity">
 
@@ -21,6 +23,7 @@
             android:orientation="vertical"
             android:layout_gravity="center_horizontal"
             android:padding="24dp"
+            android:backgroundTint="@color/cosmic_latte"
             android:background="@drawable/user_edittext">
 
             <TextView
@@ -30,7 +33,7 @@
                 android:textSize="36sp"
                 android:textAlignment="center"
                 android:textStyle="bold"
-                android:textColor="@color/black"/>
+                android:textColor="@color/smoky_black"/>
             
             <EditText
                 android:layout_width="match_parent"
@@ -63,7 +66,7 @@
                 android:id="@+id/signup_button"
                 android:textSize="18sp"
                 android:layout_marginTop="30dp"
-                android:backgroundTint="@color/black"
+                android:backgroundTint="@color/charcoal"
                 app:cornerRadius="20dp"/>
 
             <TextView

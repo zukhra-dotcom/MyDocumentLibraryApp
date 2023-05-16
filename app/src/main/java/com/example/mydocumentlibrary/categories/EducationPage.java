@@ -47,7 +47,7 @@ public class EducationPage extends AppCompatActivity {
 
     Uri imageUri;
     private Button moveToMain;
-    EditText selectPDF, writeNote;
+    EditText selectPDF, writeNote, writeOriginal;
     TextView showDeadlineText;
     int y, m, d;
     Button uploadPDF, createDeadline;
@@ -75,6 +75,7 @@ public class EducationPage extends AppCompatActivity {
         selectPDF = findViewById(R.id.selectFile);
         uploadPDF = findViewById(R.id.uploadFile);
         writeNote = findViewById(R.id.writeNoteFile);
+        writeOriginal = findViewById(R.id.originalFile);
         createDeadline = findViewById(R.id.createDeadlineFile);
         showDeadlineText = findViewById(R.id.showDeadlineText);
         storageReference = FirebaseStorage.getInstance().getReference();
@@ -166,13 +167,14 @@ public class EducationPage extends AppCompatActivity {
                         SimpleDateFormat formatter = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
                         String strDate = formatter.format(date);
 
-                        PutPDF putPDF = new PutPDF(selectPDF.getText().toString(), uri.toString(), writeNote.getText().toString(), strDate, showDeadlineText.getText().toString(), 0, true, true);
-
-                        //To store for each users here UID is as a key
-                        databaseReference.child(uid).push().setValue(putPDF);
-
-                        Toast.makeText(EducationPage.this, "PDF File is uploaded", Toast.LENGTH_LONG).show();
-                        progressDialog.dismiss();
+                        //this code is primerno correct, then need to be updated + permissionForFriends 16.05.2023 20:25
+//                        PutPDF putPDF = new PutPDF(selectPDF.getText().toString(), uri.toString(), writeNote.getText().toString(), writeOriginal.getText().toString(), strDate, showDeadlineText.getText().toString());
+//
+//                        //To store for each users here UID is as a key
+//                        databaseReference.child(uid).push().setValue(putPDF);
+//
+//                        Toast.makeText(EducationPage.this, "PDF File is uploaded", Toast.LENGTH_LONG).show();
+//                        progressDialog.dismiss();
 
                     }
                 }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {

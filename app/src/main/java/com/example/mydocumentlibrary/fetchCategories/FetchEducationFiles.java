@@ -165,6 +165,25 @@ public class FetchEducationFiles extends AppCompatActivity {
                     }
                 });
 
+                EditText originalFile = holder.itemView.findViewById(R.id.file_original);
+                originalFile.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                        //Do nothing
+                    }
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        String updateOriginal = s.toString();
+                        DatabaseReference originalRef = FirebaseDatabase.getInstance().getReference()
+                                .child("uploadEducational").child(userID).child(getRef(holder.getAdapterPosition()).getKey()).child("originalDoc");
+                        originalRef.setValue(updateOriginal);
+                    }
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                });
+
                 deleteFileBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

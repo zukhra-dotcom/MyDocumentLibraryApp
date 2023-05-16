@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -109,6 +110,27 @@ public class FetchPersonalFiles extends AppCompatActivity {
                 holder.notes.setText(model.getNotes());
                 holder.deadline.setText(model.getDeadlineDate());
 
+                holder.permissionFriends.setChecked(model.isPermissionForFriends());
+
+                holder.permissionFriends.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        // Update the model with the new permission status
+                        model.setPermissionForFriends(isChecked);
+
+                        // Update the permission status in the database
+                        DatabaseReference permissionRef = databaseReference.child(userID).child(getRef(holder.getAdapterPosition()).getKey()).child("permissionForFriends");
+                        permissionRef.setValue(isChecked);
+
+                        // Show or hide the associated views based on the permission status
+                        if (isChecked) {
+                            holder.permissionFriends.setVisibility(View.VISIBLE);
+                        } else {
+                            holder.permissionFriends.setVisibility(View.GONE);
+                        }
+                    }
+                });
+
                 //Change deadline Button and Delete Button
                 ImageButton deadlineChangeBtn = holder.itemView.findViewById(R.id.file_deadline);
                 ImageButton deleteFileBtn = holder.itemView.findViewById(R.id.file_delete);
@@ -153,6 +175,7 @@ public class FetchPersonalFiles extends AppCompatActivity {
 
                 //If changed the EditText notes, then save newer version in the database. If not just leave.
                 EditText notesFile = holder.itemView.findViewById(R.id.file_notes);
+                EditText originalFile = holder.itemView.findViewById(R.id.file_original);
                 notesFile.addTextChangedListener(new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -164,6 +187,23 @@ public class FetchPersonalFiles extends AppCompatActivity {
                         DatabaseReference notesRef = FirebaseDatabase.getInstance().getReference()
                                 .child("uploadPersonal").child(userID).child(getRef(holder.getAdapterPosition()).getKey()).child("notes");
                         notesRef.setValue(updatedNote);
+                    }
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                });
+                originalFile.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                        //Do nothing
+                    }
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        String updateOriginal = s.toString();
+                        DatabaseReference originalRef = FirebaseDatabase.getInstance().getReference()
+                                .child("uploadPersonal").child(userID).child(getRef(holder.getAdapterPosition()).getKey()).child("originalDoc");
+                        originalRef.setValue(updateOriginal);
                     }
                     @Override
                     public void afterTextChanged(Editable s) {

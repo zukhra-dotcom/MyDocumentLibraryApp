@@ -35,9 +35,12 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -65,6 +68,7 @@ public class FriendsPage extends AppCompatActivity {
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Friends");
 
         LoadFriends("");
+//        copyDataToTheFriendsNode();
 
         moveToMain = findViewById(R.id.previous_main);
         moveToMain.setOnClickListener(new View.OnClickListener() {
@@ -76,6 +80,7 @@ public class FriendsPage extends AppCompatActivity {
         });
     }
 
+
     private void LoadFriends(String s) {
         Query query = databaseReference.child(firebaseUser.getUid()).orderByChild("email").startAt(s).endAt(s + "\uf8ff");
         options = new FirebaseRecyclerOptions.Builder<Friends>().setQuery(query, Friends.class).build();
@@ -84,6 +89,27 @@ public class FriendsPage extends AppCompatActivity {
             protected void onBindViewHolder(@NonNull FriendMyViewHolder holder, int position, @NonNull Friends model) {
                 holder.email.setText(model.getEmail());
                 holder.uid.setText(model.getUid());
+
+
+                // Set onClickListener for the friend item
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        // Get the friend's UID
+                        String friendUID = model.getUid();
+
+                        // Create an intent to start FetchFriendActivity
+                        Intent intent = new Intent(FriendsPage.this, FetchFriendsFiles.class);
+
+                        // Pass the friend's UID to the FetchFriendActivity
+                        intent.putExtra("uid", friendUID);
+
+                        // Start the activity
+                        startActivity(intent);
+                    }
+                });
+
+
             }
 
             @NonNull

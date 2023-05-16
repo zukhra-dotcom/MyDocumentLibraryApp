@@ -13,23 +13,21 @@ public class PutPDF implements Serializable {
     public String notes;
     public String createdDate;
     public String deadlineDate;
+    public String originalDoc;
     public int imageResource;
-    public boolean hasDeleteButton;
-    public boolean hasCreateDeadlineButton;
-
+    public boolean permissionForFriends;
     public PutPDF() {
     }
 
 
-    public PutPDF(String name, String url, String notes, String createdDate, String deadlineDate, int imageResource, boolean hasDeleteButton, boolean hasCreateDeadlineButton) {
+    public PutPDF(String name, String url, String notes, String originalDoc, String createdDate, String deadlineDate, boolean permissionForFriends) {
         this.name = name;
         this.url = url;
         this.notes = notes;
+        this.originalDoc = originalDoc;
         this.createdDate = createdDate;
         this.deadlineDate = deadlineDate;
-        this.imageResource = imageResource;
-        this.hasDeleteButton = hasDeleteButton;
-        this.hasCreateDeadlineButton = hasCreateDeadlineButton;
+        this.permissionForFriends = permissionForFriends;
     }
 
     public String getName() {
@@ -56,6 +54,14 @@ public class PutPDF implements Serializable {
         this.notes = notes;
     }
 
+    public String getOriginalDoc() {
+        return originalDoc;
+    }
+
+    public void setOriginalDoc(String originalDoc) {
+        this.originalDoc = originalDoc;
+    }
+
     public String getCreatedDate() {
         return createdDate;
     }
@@ -76,11 +82,11 @@ public class PutPDF implements Serializable {
         return imageResource;
     }
 
-    public boolean hasDeleteButton() {
-        return hasDeleteButton;
+    public boolean isPermissionForFriends() {
+        return permissionForFriends;
     }
 
-    public boolean hasCreateDeadlineButton() {
-        return hasCreateDeadlineButton;
+    public void setPermissionForFriends(boolean permissionForFriends) {
+        this.permissionForFriends = permissionForFriends;
     }
 }

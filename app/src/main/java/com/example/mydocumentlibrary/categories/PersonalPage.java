@@ -4,9 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import android.Manifest;
+import android.animation.TimeAnimator;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -17,6 +20,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.mydocumentlibrary.fetchCategories.FetchPersonalFiles;
@@ -45,8 +49,9 @@ public class PersonalPage extends AppCompatActivity {
 
     Uri imageUri;
     private Button moveToMain;
-    EditText selectPDF, writeNote;
+    EditText selectPDF, writeNote, writeOriginal;
     TextView showDeadlineText, createdDateText;
+    Switch permissionSwitch;
     int y, m, d;
     Button uploadPDF, createDeadline;
     StorageReference storageReference;
@@ -74,13 +79,16 @@ public class PersonalPage extends AppCompatActivity {
         selectPDF = findViewById(R.id.selectFile);
         uploadPDF = findViewById(R.id.uploadFile);
         writeNote = findViewById(R.id.writeNoteFile);
+        writeOriginal = findViewById(R.id.originalFile);
         createDeadline = findViewById(R.id.createDeadlineFile);
         showDeadlineText = findViewById(R.id.showDeadlineText);
+        permissionSwitch = findViewById(R.id.permissionSwitchFile);
         storageReference = FirebaseStorage.getInstance().getReference();
         databaseReference = FirebaseDatabase.getInstance().getReference("uploadPersonal/");
 
         uploadPDF.setEnabled(false);
         createDeadline.setEnabled(false);
+        permissionSwitch.setEnabled(false);
         showDeadlineText.setVisibility(View.GONE);
 
         selectPDF.setOnClickListener(new View.OnClickListener() {
@@ -101,9 +109,10 @@ public class PersonalPage extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==12 && resultCode==RESULT_OK && data!=null && data.getData()!=null){
+        if (requestCode == 12 && resultCode == RESULT_OK && data != null && data.getData() != null) {
             uploadPDF.setEnabled(true);
             createDeadline.setEnabled(true);
+            permissionSwitch.setEnabled(true);
             showDeadlineText.setVisibility(View.VISIBLE);
             createDeadline.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -121,7 +130,7 @@ public class PersonalPage extends AppCompatActivity {
                             selectedCalendar.set(Calendar.MONTH, month);
                             selectedCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
-                            if(selectedCalendar.before(calendar)){
+                            if (selectedCalendar.before(calendar)) {
                                 Toast.makeText(PersonalPage.this, "Please select a date on or after today", Toast.LENGTH_SHORT).show();
                             } else {
                                 showDeadlineText.setText(dayOfMonth + "." + month + "." + year);
@@ -157,7 +166,7 @@ public class PersonalPage extends AppCompatActivity {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                        while (!uriTask.isComplete());
+                        while (!uriTask.isComplete()) ;
                         Uri uri = uriTask.getResult();
 
                         //While uploading new file identify uploadDate
@@ -165,7 +174,9 @@ public class PersonalPage extends AppCompatActivity {
                         SimpleDateFormat formatter = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
                         String strDate = formatter.format(date);
 
-                        PutPDF putPDF = new PutPDF(selectPDF.getText().toString(), uri.toString(), writeNote.getText().toString(), strDate, showDeadlineText.getText().toString(), 0, true, true);
+                        permissionSwitch.setEnabled(true);
+                        boolean permissionForFriends = permissionSwitch.isChecked();
+                        PutPDF putPDF = new PutPDF(selectPDF.getText().toString(), uri.toString(), writeNote.getText().toString(), writeOriginal.getText().toString(), strDate, showDeadlineText.getText().toString(), permissionForFriends);
 
                         //New code 08.05.2023 to store for each users here UID is as a key
                         databaseReference.child(uid).push().setValue(putPDF);
@@ -179,7 +190,7 @@ public class PersonalPage extends AppCompatActivity {
                 }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
-                        double progress = (100.0 * snapshot.getBytesTransferred()/snapshot.getTotalByteCount());
+                        double progress = (100.0 * snapshot.getBytesTransferred() / snapshot.getTotalByteCount());
                         progressDialog.setMessage("File is uploading..." + (int) progress + "%");
                     }
                 });

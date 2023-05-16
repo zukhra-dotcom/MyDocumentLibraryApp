@@ -10,6 +10,7 @@
         android:layout_height="120dp"
         android:layout_margin="10dp"
         app:cardCornerRadius="10dp"
+        android:backgroundTint="@color/cosmic_latte"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -40,6 +41,7 @@
                 android:text="User email"
                 android:textSize="24sp"
                 android:textStyle="bold"
+                android:textColor="@color/smoky_black"
                 app:layout_constraintBottom_toTopOf="@+id/user_uid_friend"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/circleImageView"

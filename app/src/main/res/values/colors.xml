@@ -7,4 +7,13 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="vanilla">#FDE9AD</color>
+    <color name="cosmic_latte">#FFFAED</color>
+    <color name="charcoal">#314453</color>
+    <color name="lighter_charcoal">#5b7e9a</color>
+    <color name="darker_charcoal">#102536</color>
+    <color name="lavender">#D1DCFD</color>
+    <color name="smoky_black">#181301</color>
+    <color name="yinmn_blue">#445CA4</color>
+
 </resources>

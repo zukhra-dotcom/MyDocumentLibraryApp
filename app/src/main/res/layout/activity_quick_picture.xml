@@ -7,16 +7,18 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".QuickPicture"
+    android:background="@color/charcoal"
     android:padding="20dp">
     <Button
         android:id="@+id/previous_main"
-        android:layout_width="100dp"
+        android:layout_width="150dp"
         android:layout_height="48dp"
         android:text="Categories"
-        android:textColor="@color/black"
+        android:textColor="@color/cosmic_latte"
+        android:backgroundTint="@color/charcoal"
+        android:drawableLeft="@drawable/baseline_arrow_back_24"
         android:textSize="10sp"
-        android:layout_margin="15dp"
-        android:background="#FFBF40"/>
+        android:layout_margin="15dp" />
 
     <ImageView
         android:id="@+id/quickPictureImage"
@@ -31,6 +33,10 @@
         android:layout_width="300dp"
         android:layout_height="70dp"
         android:layout_gravity="center_horizontal"
+        android:backgroundTint="@color/cosmic_latte"
+        android:textColor="@color/smoky_black"
+        android:drawableLeft="@drawable/ic_baseline_camera_alt_24"
+        android:drawableTint="@color/smoky_black"
         android:text="Capture Image"/>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -50,18 +56,24 @@
         android:id="@+id/shareImage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/cosmic_latte"
+        android:textColor="@color/smoky_black"
         android:text="Share Image" />
 
     <Button
         android:id="@+id/shareText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/cosmic_latte"
+        android:textColor="@color/smoky_black"
         android:text="Share Text"/>
 
     <Button
         android:id="@+id/shareTextPicture"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/cosmic_latte"
+        android:textColor="@color/smoky_black"
         android:text="Share Text &amp; Image"/>
 
 </LinearLayout>

@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
+    android:background="@color/vanilla"
     tools:context=".authentication.LoginActivity">
 
     <androidx.cardview.widget.CardView
@@ -21,16 +22,17 @@
             android:orientation="vertical"
             android:layout_gravity="center_horizontal"
             android:padding="24dp"
+            android:backgroundTint="@color/cosmic_latte"
             android:background="@drawable/user_edittext">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="АЯН"
+                android:text="Login"
                 android:textSize="36sp"
                 android:textAlignment="center"
                 android:textStyle="bold"
-                android:textColor="@color/black"/>
+                android:textColor="@color/smoky_black"/>
 
             <EditText
                 android:layout_width="match_parent"
@@ -63,7 +65,7 @@
                 android:id="@+id/login_button"
                 android:textSize="18sp"
                 android:layout_marginTop="30dp"
-                android:backgroundTint="@color/black"
+                android:backgroundTint="@color/charcoal"
                 app:cornerRadius="20dp"/>
 
             <TextView

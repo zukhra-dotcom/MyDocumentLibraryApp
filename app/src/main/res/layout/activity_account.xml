@@ -5,67 +5,189 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="#e3eafe"
     tools:context=".Account">
 
-    <TextView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/user_email_title"
-        android:text="Email:"
-        android:textSize="20sp"
-        android:textColor="@color/black"
-        android:padding="10dp"
-        android:gravity="center"
-        android:layout_margin="20dp"/>
+        android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/user_email"
-        android:textSize="20sp"
-        android:textColor="@color/black"
-        android:padding="10dp"
-        android:gravity="center"
-        android:layout_margin="50dp"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:background="@drawable/account_background"
+            tools:ignore="MissingConstraints">
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/findFriends_button"
-        android:layout_marginTop="20dp"
-        android:text="Find Friends"
-        android:layout_below="@+id/user_email"/>
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/circleImageView2"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginStart="250dp"
+                android:layout_marginTop="60dp"
+                android:layout_marginEnd="40dp"
+                android:src="@drawable/personal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
+            <TextView
+                android:id="@+id/todaysDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="45dp"
+                android:padding="10dp"
+                android:text="13th May 2023"
+                android:textColor="@color/lighter_charcoal"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="This is Account Page"
-        android:gravity="center" />
+            <TextView
+                android:id="@+id/user_email_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="87dp"
+                android:padding="10dp"
+                android:text="Hello,"
+                android:textColor="@color/white"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/logout_button"
-        android:text="Logout"
-        android:backgroundTint="@color/black"
-        android:gravity="center"
-        android:drawableLeft="@drawable/baseline_logout_24"
-        android:drawablePadding="8dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="500dp"/>
+            <TextView
+                android:id="@+id/user_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="120dp"
+                android:hint="Email@email"
+                android:padding="10dp"
+                android:paddingEnd="50dp"
+                android:textColor="@color/white"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <Button
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/delete_account_button"
-        android:text="Delete Account"
-        android:backgroundTint="#FF0000"
-        android:gravity="center"
-        android:drawablePadding="8dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="550dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="500dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="30dp"
+            android:background="@drawable/background_account"
+            android:elevation="3dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            style="?android:attr/buttonBarStyle">
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_margin="30dp">
+            <Button
+                android:id="@+id/findFriends_button"
+                android:layout_width="300dp"
+                android:layout_height="80dp"
+                android:layout_marginTop="50dp"
+                android:layout_gravity="center"
+                android:textColor="@color/smoky_black"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:backgroundTint="@color/vanilla"
+                android:drawableLeft="@drawable/baseline_person_search_24"
+                android:drawablePadding="8dp"
+                android:text="Find Friends" />
+
+            <Button
+                android:id="@+id/logout_button"
+                android:layout_width="300dp"
+                android:layout_height="80dp"
+                android:layout_marginTop="30dp"
+                android:layout_gravity="center"
+                android:drawableLeft="@drawable/baseline_logout_24"
+                android:drawablePadding="8dp"
+                android:textColor="@color/smoky_black"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:backgroundTint="@color/vanilla"
+                android:text="Logout" />
+
+            <Button
+                android:id="@+id/delete_account_button"
+                android:layout_width="300dp"
+                android:layout_height="80dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp"
+                android:gravity="center"
+                android:textColor="@color/smoky_black"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:backgroundTint="@color/vanilla"
+                android:drawableLeft="@drawable/baseline_delete_24"
+                android:drawablePadding="8dp"
+                android:text="Delete Account" />
+        </LinearLayout>
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+<!--    <TextView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:id="@+id/user_email_title"-->
+<!--        android:text="Email:"-->
+<!--        android:textSize="20sp"-->
+<!--        android:textColor="@color/black"-->
+<!--        android:padding="10dp"-->
+<!--        android:gravity="center"-->
+<!--        android:layout_margin="20dp"/>-->
+
+<!--    <TextView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:id="@+id/user_email"-->
+<!--        android:textSize="20sp"-->
+<!--        android:textColor="@color/black"-->
+<!--        android:padding="10dp"-->
+<!--        android:gravity="center"-->
+<!--        android:layout_margin="50dp"/>-->
+
+<!--    <Button-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:id="@+id/findFriends_button"-->
+<!--        android:layout_marginTop="320dp"-->
+<!--        android:text="Find Friends" />-->
+
+<!--    <Button-->
+<!--        android:layout_width="200dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:id="@+id/logout_button"-->
+<!--        android:text="Logout"-->
+<!--        android:backgroundTint="@color/black"-->
+<!--        android:gravity="center"-->
+<!--        android:drawableLeft="@drawable/baseline_logout_24"-->
+<!--        android:drawablePadding="8dp"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:layout_marginTop="500dp"/>-->
+
+<!--    <Button-->
+<!--        android:layout_width="200dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:id="@+id/delete_account_button"-->
+<!--        android:text="Delete Account"-->
+<!--        android:backgroundTint="#FF0000"-->
+<!--        android:gravity="center"-->
+<!--        android:drawablePadding="8dp"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:layout_marginTop="550dp"/>-->
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:layout_width="match_parent"
@@ -79,13 +201,13 @@
         android:layout_marginTop="30dp"
         android:elevation="2dp"
         app:menu="@menu/bottom_nav_menu"
-        app:itemIconTint="@color/white">
+        app:itemIconTint="@color/cosmic_latte">
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"
             android:layout_width="186dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:backgroundTint="@color/white"
+            android:backgroundTint="@color/cosmic_latte"
             android:src="@drawable/ic_baseline_add_24" />
     </com.google.android.material.bottomnavigation.BottomNavigationView>
 
