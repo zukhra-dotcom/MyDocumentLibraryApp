@@ -8,9 +8,21 @@
 
     <TextView
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="All your documents with notes"
+        android:gravity="center"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerNoteFiles"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="This is Notes Page"
-        android:gravity="center" />
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="65dp"
+        tools:listitem="@layout/single_view_files" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:layout_width="match_parent"
@@ -20,7 +32,7 @@
         android:background="@drawable/bottom_navigation"
         android:layout_marginEnd="20dp"
         android:layout_marginStart="20dp"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="5dp"
         android:layout_marginTop="30dp"
         android:elevation="2dp"
         app:menu="@menu/bottom_nav_menu"

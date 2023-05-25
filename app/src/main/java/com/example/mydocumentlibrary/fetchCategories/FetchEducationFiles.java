@@ -55,7 +55,6 @@ public class FetchEducationFiles extends AppCompatActivity {
     DatabaseReference databaseReference, userRef;
     List<PutPDF> uploadedPDF;
     private Button moveToEducationPage;
-    //Added 08.05.2023 to store data for each users
     private String userID;
     RecyclerView recyclerView;
     FirebaseRecyclerOptions<PutPDF> options;
@@ -112,7 +111,7 @@ public class FetchEducationFiles extends AppCompatActivity {
                     public void onClick(View v) {
                         String currentDeadlineDate = holder.deadline.getText().toString();
                         Calendar updatedDeadline = Calendar.getInstance();
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy hh:mm");
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
                         try {
                             updatedDeadline.setTime(dateFormat.parse(currentDeadlineDate));
                         } catch (ParseException e) {

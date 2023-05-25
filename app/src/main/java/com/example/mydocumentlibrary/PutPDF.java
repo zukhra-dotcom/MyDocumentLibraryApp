@@ -14,8 +14,12 @@ public class PutPDF implements Serializable {
     public String createdDate;
     public String deadlineDate;
     public String originalDoc;
-    public int imageResource;
+//    public int imageResource;
     public boolean permissionForFriends;
+
+    private String fileType;
+
+//    public String scannedImageURL;
     public PutPDF() {
     }
 
@@ -28,6 +32,11 @@ public class PutPDF implements Serializable {
         this.createdDate = createdDate;
         this.deadlineDate = deadlineDate;
         this.permissionForFriends = permissionForFriends;
+    }
+    public PutPDF(String name, String url, String createdDate) {
+        this.name = name;
+        this.url = url;
+        this.createdDate = createdDate;
     }
 
     public String getName() {
@@ -78,9 +87,9 @@ public class PutPDF implements Serializable {
         this.deadlineDate = deadlineDate;
     }
 
-    public int getImageResource() {
-        return imageResource;
-    }
+//    public int getImageResource() {
+//        return imageResource;
+//    }
 
     public boolean isPermissionForFriends() {
         return permissionForFriends;
@@ -89,4 +98,22 @@ public class PutPDF implements Serializable {
     public void setPermissionForFriends(boolean permissionForFriends) {
         this.permissionForFriends = permissionForFriends;
     }
+
+    public String getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
+    }
+
+
+
+    //    public String getScannedImageURL() {
+//        return scannedImageURL;
+//    }
+//
+//    public void setScannedImageURL(String scannedImageURL) {
+//        this.scannedImageURL = scannedImageURL;
+//    }
 }

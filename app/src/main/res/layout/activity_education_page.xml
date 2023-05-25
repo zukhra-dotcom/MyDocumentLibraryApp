@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/charcoal"
     tools:context=".categories.EducationPage">
 
@@ -16,7 +15,7 @@
         <ImageView
             android:layout_width="300dp"
             android:layout_height="200dp"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="90dp"
             android:layout_centerHorizontal="true"
             android:src="@drawable/document_bg_fourtho"/>
 
@@ -25,10 +24,10 @@
             android:layout_width="150dp"
             android:layout_height="48dp"
             android:text="Categories"
-            android:backgroundTint="@color/charcoal"
+            android:textColor="@color/cosmic_latte"
             android:textSize="10sp"
-            android:color="@color/cosmic_latte"
             android:layout_margin="15dp"
+            android:backgroundTint="@color/charcoal"
             android:drawableLeft="@drawable/baseline_arrow_back_24"/>
 
         <RelativeLayout
@@ -39,7 +38,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="Education"
+                android:text="Educational"
                 android:textStyle="bold"
                 android:layout_marginTop="140dp"
                 android:layout_marginLeft="250dp" />
@@ -55,23 +54,23 @@
                 android:layout_centerHorizontal="true"
                 android:textColor="@color/black" />
 
-
             <RelativeLayout
                 android:layout_height="500dp"
                 android:layout_width="wrap_content"
                 android:layout_marginTop="300dp"
-                android:background="@color/white">
+                android:background="@color/cosmic_latte">
 
                 <ImageView
                     android:scaleType="centerCrop"
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
                     android:src="@drawable/wave__1_"/>
+
                 <ImageView
-                    android:scaleType="centerCrop"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_marginLeft="350dp"
+                    android:scaleType="centerCrop"
                     android:src="@drawable/paper_clip" />
 
                 <TextView
@@ -101,7 +100,7 @@
                     android:layout_width="300dp"
                     android:layout_height="50dp"
                     android:id="@+id/writeNoteFile"
-                    android:layout_marginTop="120dp"
+                    android:layout_marginTop="110dp"
                     android:layout_centerHorizontal="true"
                     android:hint="Write notes..."
                     android:drawableLeft="@drawable/baseline_notes_24"
@@ -123,11 +122,13 @@
                     android:minLines="2"
                     android:maxLines="4"/>
 
+
                 <Button
                     android:id="@+id/createDeadlineFile"
                     android:layout_width="200dp"
-                    android:layout_height="50dp"
+                    android:layout_height="40dp"
                     android:backgroundTint="@color/charcoal"
+                    android:textSize="12sp"
                     android:layout_marginTop="210dp"
                     android:layout_centerHorizontal="true"
                     android:text="Create Deadline"/>
@@ -135,25 +136,41 @@
                 <Button
                     android:id="@+id/uploadFile"
                     android:layout_width="200dp"
+                    android:textColor="@color/smoky_black"
                     android:layout_height="50dp"
                     android:backgroundTint="#ffd60d"
-                    android:textColor="@color/smoky_black"
                     android:layout_marginTop="260dp"
                     android:layout_centerHorizontal="true"
                     android:text="Upload File"/>
 
-
                 <ImageButton
-                    android:onClick="check"
                     android:id="@+id/camera_scan"
                     android:layout_width="200dp"
                     android:layout_height="50dp"
                     app:srcCompat="@drawable/ic_baseline_camera_alt_24"
                     android:layout_marginTop="340dp"
                     android:layout_centerHorizontal="true"
-                    android:background="#34549D" />
+                    android:background="#34549D"
+                    android:onClick="startCameraScan" />
 
+                <Switch
+                    android:id="@+id/permissionSwitchFile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginEnd="53dp"
+                    android:layout_marginBottom="189dp" />
+
+                <ImageView
+                    android:layout_width="300dp"
+                    android:layout_height="300dp"
+                    android:id="@+id/scannedImageView"
+                    android:layout_marginTop="10dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@+id/camera_scan"/>
             </RelativeLayout>
         </RelativeLayout>
     </RelativeLayout>
-</LinearLayout>
+</ScrollView>

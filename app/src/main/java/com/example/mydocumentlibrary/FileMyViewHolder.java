@@ -10,11 +10,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.w3c.dom.Text;
+
 public class FileMyViewHolder extends RecyclerView.ViewHolder { //class that takes data from single_view_files.xml
     public TextView name, date, deadline;
     public EditText notes, original;
     public ImageButton delete;
     public Switch permissionFriends;
+    public TextView category;
     public FileMyViewHolder(@NonNull View itemView) {
         super(itemView);
         name = itemView.findViewById(R.id.file_title);
@@ -24,5 +27,6 @@ public class FileMyViewHolder extends RecyclerView.ViewHolder { //class that tak
         deadline = itemView.findViewById(R.id.file_deadlineDate);
         delete = itemView.findViewById(R.id.file_delete);
         permissionFriends = itemView.findViewById(R.id.file_permissionSwitch);
+        category = itemView.findViewById(R.id.file_type);
     }
 }

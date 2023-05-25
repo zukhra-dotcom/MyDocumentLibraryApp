@@ -1,4 +1,4 @@
-package com.example.mydocumentlibrary.categories;
+package com.example.mydocumentlibrary;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -9,12 +9,10 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
@@ -23,16 +21,15 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Switch;
-import android.widget.TextView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.example.mydocumentlibrary.fetchCategories.FetchTravelFiles;
-import com.example.mydocumentlibrary.MainActivity;
-import com.example.mydocumentlibrary.PutPDF;
-import com.example.mydocumentlibrary.R;
+import com.example.mydocumentlibrary.categories.PersonalPage;
+import com.example.mydocumentlibrary.fetchCategories.FetchPersonalFiles;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -48,63 +45,54 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
-public class TravelPage extends AppCompatActivity {
+public class Adding extends AppCompatActivity {
     private static final int PERMISSION_CODE = 1000;
     private static final int IMAGE_CAPTURE_CODE = 1001;
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
 
-    private Button moveToMain;
-    EditText selectPDF, writeNote, writeOriginal;
-    TextView showDeadlineText, createdDateText;
-    Switch permissionSwitch;
-    int y, m, d;
-    Button uploadPDF, createDeadline;
+    EditText selectPDF;
+    Button uploadPDF;
     ImageButton cameraScanButton;
     ImageView scanImageView;
+    RadioGroup categoryRadioGroup1, categoryRadioGroup2;
+    RadioButton personalRadio, educationalRadio, healthRadio, jobRadio, travelRadio, billsRadio, secretRadio;
     StorageReference storageReference;
     DatabaseReference databaseReference;
-
     private String userID;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_travel_page);
+        setContentView(R.layout.activity_adding);
 
         Intent intent = getIntent();
         userID = intent.getStringExtra("USER_ID");
-
-        moveToMain = findViewById(R.id.previous_main);
-        moveToMain = findViewById(R.id.previous_main);
-        moveToMain.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(TravelPage.this, MainActivity.class);
-                startActivity(intent);
-            }
-        });
         selectPDF = findViewById(R.id.selectFile);
         uploadPDF = findViewById(R.id.uploadFile);
-        writeNote = findViewById(R.id.writeNoteFile);
-        writeOriginal = findViewById(R.id.originalFile);
-        createDeadline = findViewById(R.id.createDeadlineFile);
-        showDeadlineText = findViewById(R.id.showDeadlineText);
-        permissionSwitch = findViewById(R.id.permissionSwitchFile);
         cameraScanButton = findViewById(R.id.camera_scan);
         scanImageView = findViewById(R.id.scannedImageView);
         storageReference = FirebaseStorage.getInstance().getReference();
-        databaseReference = FirebaseDatabase.getInstance().getReference("uploadTravel/");
+//        databaseReference = FirebaseDatabase.getInstance().getReference(); //here not only one database node
 
-//        uploadPDF.setEnabled(false);
-//        createDeadline.setEnabled(false);
-//        permissionSwitch.setEnabled(false);
-        scanImageView.setVisibility(View.GONE);
-        showDeadlineText.setVisibility(View.GONE);
+        categoryRadioGroup1 = findViewById(R.id.radioGroup);
+        categoryRadioGroup2 = findViewById(R.id.radioGroup2);
+
+        personalRadio = findViewById(R.id.radioButtonPersonal);
+        educationalRadio = findViewById(R.id.radioButtonEducational);
+        healthRadio = findViewById(R.id.radioButtonHealth);
+        jobRadio = findViewById(R.id.radioButtonJob);
+        travelRadio = findViewById(R.id.radioButtonTravel);
+        billsRadio = findViewById(R.id.radioButtonBills);
+        secretRadio = findViewById(R.id.radioButtonSecret);
+
         selectPDF.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 selectPDFFile();
+                cameraScanButton.setEnabled(false);
             }
         });
 
@@ -112,9 +100,10 @@ public class TravelPage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Check camera permission
-                if (ContextCompat.checkSelfPermission(TravelPage.this, Manifest.permission.CAMERA)
+                selectPDF.setEnabled(false);
+                if (ContextCompat.checkSelfPermission(Adding.this, android.Manifest.permission.CAMERA)
                         != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(TravelPage.this, new String[]{Manifest.permission.CAMERA},
+                    ActivityCompat.requestPermissions(Adding.this, new String[]{Manifest.permission.CAMERA},
                             PERMISSION_CODE);
                 } else {
                     // Permission granted, start camera scanning
@@ -122,6 +111,80 @@ public class TravelPage extends AppCompatActivity {
                 }
             }
         });
+
+        categoryRadioGroup1.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.radioButtonPersonal:
+                        Toast.makeText(Adding.this, "Personal category selected", Toast.LENGTH_SHORT).show();
+                        databaseReference = FirebaseDatabase.getInstance().getReference("uploadPersonal/");
+                        break;
+                    case R.id.radioButtonEducational:
+                        Toast.makeText(Adding.this, "Educational category selected", Toast.LENGTH_SHORT).show();
+                        databaseReference = FirebaseDatabase.getInstance().getReference("uploadEducational/");
+                        break;
+                    case R.id.radioButtonHealth:
+                        Toast.makeText(Adding.this, "Health category selected", Toast.LENGTH_SHORT).show();
+                        databaseReference = FirebaseDatabase.getInstance().getReference("uploadHealth/");
+                        break;
+                }
+            }
+        });
+        categoryRadioGroup2.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.radioButtonTravel:
+                        Toast.makeText(Adding.this, "Travel category selected", Toast.LENGTH_SHORT).show();
+                        databaseReference = FirebaseDatabase.getInstance().getReference("uploadTravel/");
+                        break;
+                    case R.id.radioButtonBills:
+                        Toast.makeText(Adding.this, "Bill category selected", Toast.LENGTH_SHORT).show();
+                        databaseReference = FirebaseDatabase.getInstance().getReference("uploadBill/");
+                        break;
+                    case R.id.radioButtonSecret:
+                        Toast.makeText(Adding.this, "Secret category selected", Toast.LENGTH_SHORT).show();
+                        databaseReference = FirebaseDatabase.getInstance().getReference("uploadSecrets/");
+                        break;
+                    case R.id.radioButtonJob:
+                        Toast.makeText(Adding.this, "Job category selected", Toast.LENGTH_SHORT).show();
+                        databaseReference = FirebaseDatabase.getInstance().getReference("uploadJob/");
+                        break;
+                }
+            }
+        });
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setSelectedItemId(R.id.account);
+
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            switch (item.getItemId()){
+                case R.id.dashboard:
+                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_in_left);
+                    finish();
+                    return true;
+                case R.id.account:
+                    startActivity(new Intent(getApplicationContext(), Account.class));
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_in_left);
+                    finish();
+                    return true;
+                case R.id.notes:
+                    startActivity(new Intent(getApplicationContext(), Notes.class));
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_in_left);
+                    finish();
+                    return true;
+                case R.id.notification:
+                    startActivity(new Intent(getApplicationContext(), Notifications.class));
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_in_left);
+                    finish();
+                    return true;
+            }
+            return false;
+        });
+
+
     }
 
     private void startCameraScan() {
@@ -142,45 +205,10 @@ public class TravelPage extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 12 && resultCode == RESULT_OK && data != null && data.getData() != null) {
-//            uploadPDF.setEnabled(true);
-//            createDeadline.setEnabled(true);
-//            //
-//            permissionSwitch.setEnabled(true);
             Uri pdfUri = data.getData();
             selectPDF.setText("File Selected");
-            showDeadlineText.setVisibility(View.VISIBLE);
-            createDeadline.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    final Calendar calendar = Calendar.getInstance();
-                    calendar.add(Calendar.WEEK_OF_YEAR, 2);
-                    y = calendar.get(Calendar.YEAR);
-                    m = calendar.get(Calendar.MONTH);
-                    d = calendar.get(Calendar.DAY_OF_MONTH);
-                    DatePickerDialog datePickerDialog = new DatePickerDialog(TravelPage.this, new DatePickerDialog.OnDateSetListener() {
-                        @Override
-                        public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                            //checking if selected date from the calendar is after today`s date
-                            Calendar selectedCalendar = Calendar.getInstance();
-                            selectedCalendar.set(Calendar.YEAR, year);
-                            selectedCalendar.set(Calendar.MONTH, month);
-                            selectedCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-
-                            if (selectedCalendar.before(calendar)) {
-                                Toast.makeText(TravelPage.this, "Please select a date on or after today", Toast.LENGTH_SHORT).show();
-                            } else {
-                                showDeadlineText.setText(dayOfMonth + "." + month + "." + year);
-                            }
-                        }
-                    }, y, m, d);
-                    datePickerDialog.show();
-                }
-            });
-
             selectPDF.setText(data.getDataString()
                     .substring(data.getDataString().lastIndexOf("/") + 1));
-
-
             uploadPDF.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -188,8 +216,6 @@ public class TravelPage extends AppCompatActivity {
                 }
             });
         }
-
-
         if (requestCode == IMAGE_CAPTURE_CODE && resultCode == RESULT_OK) {
             // Get the captured image
             scanImageView.setVisibility(View.VISIBLE);
@@ -209,11 +235,12 @@ public class TravelPage extends AppCompatActivity {
             imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
             byte[] imageData = baos.toByteArray();
 
+
             // Upload the image to Firebase Storage
             StorageReference storageReference = FirebaseStorage.getInstance().getReference();
             String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            String imageName = "travel_" + System.currentTimeMillis() + ".jpg";
-            StorageReference imageRef = storageReference.child("travel/" + uid + "/" + imageName);
+            String imageName = "added_" + System.currentTimeMillis() + ".jpg";
+            StorageReference imageRef = storageReference.child("added/" + uid + "/" + imageName);
             imageRef.putBytes(imageData)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -223,28 +250,21 @@ public class TravelPage extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(Uri uri) {
                                     // Save the image URL in the Firebase Realtime Database
+
                                     String key = databaseReference.child(uid).push().getKey();
                                     String imageURL = uri.toString();
                                     databaseReference.child(uid).child(key).child("url").setValue(imageURL);
                                     // Perform additional processing or save other data related to the scanned image
                                     String createdDate = getCurrentDateTime();
-                                    String deadlineDate = showDeadlineText.getText().toString();
                                     String name = "scanned" + key;
-                                    String notes = writeNote.getText().toString();
-                                    String originalDoc = writeOriginal.getText().toString();
-                                    boolean permissionForFriends = permissionSwitch.isChecked();
 
                                     HashMap<String, Object> documentData = new HashMap<>();
                                     documentData.put("createdDate", createdDate);
-                                    documentData.put("deadlineDate", deadlineDate);
                                     documentData.put("name", name);
-                                    documentData.put("notes", notes);
-                                    documentData.put("originalDoc", originalDoc);
-                                    documentData.put("permissionForFriends", permissionForFriends);
                                     documentData.put("url", imageURL);
 
                                     databaseReference.child(uid).child(key).setValue(documentData);
-                                    Toast.makeText(TravelPage.this, "Scanned document uploaded to the storage", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(Adding.this, "Scanned document uploaded to the storage", Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }
@@ -253,7 +273,7 @@ public class TravelPage extends AppCompatActivity {
     }
 
     private String getCurrentDateTime() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         Date currentDate = new Date();
         return dateFormat.format(currentDate);
     }
@@ -266,7 +286,7 @@ public class TravelPage extends AppCompatActivity {
         //Store the document for each users
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        StorageReference reference = storageReference.child("travel/" + uid + "/" + "travel" + System.currentTimeMillis() + ".file");
+        StorageReference reference = storageReference.child("added/" + uid + "/" + "new" + System.currentTimeMillis() + ".file");
         reference.putFile(data)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
@@ -277,19 +297,17 @@ public class TravelPage extends AppCompatActivity {
 
                         //While uploading new file identify uploadDate
                         Date date = new Date();
-                        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+                        SimpleDateFormat formatter = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
                         String strDate = formatter.format(date);
 
-                        permissionSwitch.setEnabled(true);
-                        boolean permissionForFriends = permissionSwitch.isChecked();
-                        PutPDF putPDF = new PutPDF(selectPDF.getText().toString(), uri.toString(), writeNote.getText().toString(), writeOriginal.getText().toString(), strDate, showDeadlineText.getText().toString(), permissionForFriends);
+                        PutPDF putPDF = new PutPDF(selectPDF.getText().toString(), uri.toString(), strDate);
 
                         //New code 08.05.2023 to store for each users here UID is as a key
                         databaseReference.child(uid).push().setValue(putPDF);
 
                         //it was before 08.05.2023. so in the top I added to store for each users
 //                        databaseReference.child(databaseReference.push().getKey()).setValue(putPDF);
-                        Toast.makeText(TravelPage.this, "File is uploaded", Toast.LENGTH_LONG).show();
+                        Toast.makeText(Adding.this, "File is uploaded", Toast.LENGTH_LONG).show();
                         progressDialog.dismiss();
 
                     }
@@ -300,9 +318,5 @@ public class TravelPage extends AppCompatActivity {
                         progressDialog.setMessage("File is uploading..." + (int) progress + "%");
                     }
                 });
-    }
-
-    public void fetchFile(View view) {
-        startActivity(new Intent(getApplicationContext(), FetchTravelFiles.class));
     }
 }

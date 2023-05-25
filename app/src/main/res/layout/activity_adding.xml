@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/charcoal"
+    android:orientation="vertical"
+    android:padding="0dp"
+    tools:context=".Adding">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/categoryText"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:text="Select Category:" />
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/categories"
+        android:padding="8dp"
+        android:layout_gravity="center"
+        android:columnCount="4"
+        android:rowCount="2"
+        android:layout_below="@+id/categoryText"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp">
+
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/radioGroup"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_columnSpan="4"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/radioButtonPersonal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Personal"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:padding="5dp"/>
+
+            <RadioButton
+                android:id="@+id/radioButtonEducational"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Educational"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:padding="5dp"/>
+
+            <RadioButton
+                android:id="@+id/radioButtonHealth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Health"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:padding="5dp"/>
+
+        </RadioGroup>
+
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/radioGroup2"
+            android:layout_row="1"
+            android:layout_column="0"
+            android:layout_columnSpan="4"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/radioButtonTravel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Travel"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:padding="5dp"/>
+
+            <RadioButton
+                android:id="@+id/radioButtonBills"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bills"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:padding="5dp"/>
+
+            <RadioButton
+                android:id="@+id/radioButtonSecret"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Secret"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:padding="5dp"/>
+            <RadioButton
+                android:id="@+id/radioButtonJob"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Job"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:padding="5dp"/>
+        </RadioGroup>
+    </GridLayout>
+
+    <EditText
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:id="@+id/selectFile"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"
+        android:hint="Select File..."
+        android:drawableLeft="@drawable/baseline_insert_drive_file_24"
+        android:drawableTint="@color/white"
+        android:drawablePadding="8dp"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:layout_below="@+id/categories"
+        android:textStyle="bold"/>
+
+
+    <ImageButton
+        android:id="@+id/camera_scan"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        app:srcCompat="@drawable/ic_baseline_camera_alt_24"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"
+        android:background="#34549D"
+        android:layout_below="@+id/selectFile"
+        android:onClick="startCameraScan" />
+
+    <ImageView
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:id="@+id/scannedImageView"
+        android:background="@drawable/ic_baseline_image_24"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginTop="0dp"
+        android:layout_below="@+id/camera_scan"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/uploadFile"
+        android:layout_width="200dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textColor="@color/smoky_black"
+        android:layout_height="50dp"
+        android:backgroundTint="#ffd60d"
+        android:layout_marginTop="0dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/scannedImageView"
+        android:text="Upload File"/>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/bottomNavigationView"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/bottom_navigation"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="10dp"
+
+        android:layout_gravity="bottom"
+        android:elevation="2dp"
+        app:menu="@menu/bottom_nav_menu"
+        app:itemIconTint="@color/cosmic_latte">
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="186dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:backgroundTint="@color/cosmic_latte"
+            android:src="@drawable/ic_baseline_add_24" />
+    </com.google.android.material.bottomnavigation.BottomNavigationView>
+
+</RelativeLayout>

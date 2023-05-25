@@ -15,6 +15,8 @@ import android.widget.Spinner;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -28,6 +30,7 @@ public class FindFriendActivity extends AppCompatActivity {
     DatabaseReference databaseReference;
     FirebaseUser firebaseUser;
     RecyclerView recyclerView;
+    FloatingActionButton fab;
 
     //relationship xml id not in this class
 
@@ -41,8 +44,44 @@ public class FindFriendActivity extends AppCompatActivity {
         firebaseUser = firebaseAuth.getCurrentUser();
         recyclerView = findViewById(R.id.recyclerView_friends);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        fab = findViewById(R.id.fab);
 
         LoadUsers("");
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setSelectedItemId(R.id.account);
+
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            switch (item.getItemId()){
+                case R.id.dashboard:
+                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_in_left);
+                    finish();
+                    return true;
+                case R.id.account:
+                    startActivity(new Intent(getApplicationContext(), Account.class));
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_in_left);
+                    finish();
+                    return true;
+                case R.id.notes:
+                    startActivity(new Intent(getApplicationContext(), Notes.class));
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_in_left);
+                    finish();
+                    return true;
+                case R.id.notification:
+                    startActivity(new Intent(getApplicationContext(), Notifications.class));
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_in_left);
+                    finish();
+                    return true;
+            }
+            return false;
+        });
+
+        fab.setOnClickListener(view -> {
+            // Perform your desired action here
+            startActivity(new Intent(getApplicationContext(), Adding.class));
+            finish();
+        });
     }
 
     private void LoadUsers(String s) {

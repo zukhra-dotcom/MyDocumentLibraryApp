@@ -3,14 +3,19 @@ package com.example.mydocumentlibrary;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.mydocumentlibrary.categories.PersonalPage;
+import com.example.mydocumentlibrary.fetchCategories.FetchFriendsFiles;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -30,6 +35,8 @@ public class ViewFriendActvity extends AppCompatActivity {
     Button btnPerform, btnDecline;
     String CurrentState = "nothing_happen";
     String myUserEmail, myUserID;
+    private Button moveToUsers;
+    FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +57,7 @@ public class ViewFriendActvity extends AppCompatActivity {
         uid = findViewById(R.id.uid);
         btnPerform = findViewById(R.id.sendRequestBtn);
         btnDecline = findViewById(R.id.declineBtn);
+        fab = findViewById(R.id.fab);
 
         LoadUser();
 
@@ -68,6 +76,58 @@ public class ViewFriendActvity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Unfriend(userID);
+            }
+        });
+
+        moveToUsers = findViewById(R.id.previous_usersList);
+        moveToUsers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ViewFriendActvity.this, FindFriendActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setSelectedItemId(R.id.account);
+
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            switch (item.getItemId()){
+                case R.id.dashboard:
+                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                    finish();
+                    return true;
+                case R.id.account:
+                    startActivity(new Intent(getApplicationContext(), Account.class));
+                    finish();
+                    return true;
+                case R.id.notes:
+                    startActivity(new Intent(getApplicationContext(), Notes.class));
+                    finish();
+                    return true;
+                case R.id.notification:
+                    startActivity(new Intent(getApplicationContext(), Notifications.class));
+                    finish();
+                    return true;
+            }
+            return false;
+        });
+
+        fab.setOnClickListener(view -> {
+            // Perform your desired action here
+            startActivity(new Intent(getApplicationContext(), Adding.class));
+            finish();
+        });
+
+        btnPerform.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(CurrentState.equals("friend")){
+                    String friendUID = userID;
+                    Intent intent = new Intent(ViewFriendActvity.this, FetchFriendsFiles.class);
+                    intent.putExtra("uid", friendUID);
+                    startActivity(intent);
+                }
             }
         });
     }

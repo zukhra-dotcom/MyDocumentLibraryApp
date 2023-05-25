@@ -12,9 +12,11 @@ import android.widget.Toast;
 
 import com.example.mydocumentlibrary.authentication.LoginActivity;
 import com.example.mydocumentlibrary.authentication.SignUpActivity;
+import com.example.mydocumentlibrary.categories.SecretsPasscodeActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -27,9 +29,10 @@ public class Account extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
-    private Button logoutBtn, deleteAccountBtn, findFriendsBtn;
+    private Button logoutBtn, deleteAccountBtn, findFriendsBtn, changeSecretsPass;
     private TextView userEmail;
     private String userID;
+    FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +46,8 @@ public class Account extends AppCompatActivity {
         deleteAccountBtn = findViewById(R.id.delete_account_button);
         userEmail = findViewById(R.id.user_email);
         findFriendsBtn = findViewById(R.id.findFriends_button);
+        changeSecretsPass = findViewById(R.id.secret_passcode_button);
+        fab = findViewById(R.id.fab);
 
         //Saving from authentication to the database
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -62,6 +67,15 @@ public class Account extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Account.this, FindFriendActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        changeSecretsPass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Account.this, PasscodeChanging.class);
                 startActivity(intent);
                 finish();
             }
@@ -110,23 +124,26 @@ public class Account extends AppCompatActivity {
             switch (item.getItemId()){
                 case R.id.dashboard:
                     startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_in_left);
                     finish();
                     return true;
                 case R.id.account:
                     return true;
                 case R.id.notes:
                     startActivity(new Intent(getApplicationContext(), Notes.class));
-                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_in_left);
                     finish();
                     return true;
                 case R.id.notification:
                     startActivity(new Intent(getApplicationContext(), Notifications.class));
-                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_in_left);
                     finish();
                     return true;
             }
             return false;
+        });
+
+        fab.setOnClickListener(view -> {
+            // Perform your desired action here
+            startActivity(new Intent(getApplicationContext(), Adding.class));
+            finish();
         });
     }
 }

@@ -71,7 +71,7 @@ public class FetchFriendsFiles extends AppCompatActivity {
 
         //Added 08.05.2023 to store data for each users
         userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        databaseReference = FirebaseDatabase.getInstance().getReference(); //here not only 'uploadPersonal', all 'upload*.child(userID)'
+        databaseReference = FirebaseDatabase.getInstance().getReference();
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
         userRef = FirebaseDatabase.getInstance().getReference().child("Users");

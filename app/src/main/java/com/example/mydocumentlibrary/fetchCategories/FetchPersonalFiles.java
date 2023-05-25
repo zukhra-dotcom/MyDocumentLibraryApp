@@ -10,6 +10,7 @@ import android.app.DatePickerDialog;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
+
 import android.graphics.Color;
 import android.graphics.drawable.DrawableWrapper;
 import android.net.Uri;
@@ -60,7 +61,6 @@ public class FetchPersonalFiles extends AppCompatActivity {
     DatabaseReference databaseReference, userRef;
     List<PutPDF> uploadedPDF;
     private Button moveToPersonalPage;
-    //Added 08.05.2023 to store data for each users
     private String userID;
     RecyclerView recyclerView;
     FirebaseRecyclerOptions<PutPDF> options;
@@ -104,12 +104,14 @@ public class FetchPersonalFiles extends AppCompatActivity {
         adapter = new FirebaseRecyclerAdapter<PutPDF, FileMyViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull FileMyViewHolder holder, int position, @NonNull PutPDF model) {
+
                 //initializing the data as textView, ... others to the single_view_files.xml
                 holder.name.setText(model.getName());
                 holder.date.setText(model.getCreatedDate());
                 holder.notes.setText(model.getNotes());
+                holder.original.setText(model.getOriginalDoc());
                 holder.deadline.setText(model.getDeadlineDate());
-
+                holder.category.setVisibility(View.GONE);
                 holder.permissionFriends.setChecked(model.isPermissionForFriends());
 
                 holder.permissionFriends.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -126,7 +128,7 @@ public class FetchPersonalFiles extends AppCompatActivity {
                         if (isChecked) {
                             holder.permissionFriends.setVisibility(View.VISIBLE);
                         } else {
-                            holder.permissionFriends.setVisibility(View.GONE);
+                            holder.permissionFriends.setVisibility(View.VISIBLE);
                         }
                     }
                 });
@@ -140,7 +142,7 @@ public class FetchPersonalFiles extends AppCompatActivity {
                     public void onClick(View v) {
                         String currentDeadlineDate = holder.deadline.getText().toString();
                         Calendar updatedDeadline = Calendar.getInstance();
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy hh:mm");
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
                         try {
                             updatedDeadline.setTime(dateFormat.parse(currentDeadlineDate));
                         } catch (ParseException e) {
@@ -154,6 +156,7 @@ public class FetchPersonalFiles extends AppCompatActivity {
                                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                                         // Create a new Calendar object with the selected deadline date
                                         Calendar selectedCalendar2 = Calendar.getInstance();
+                                        selectedCalendar2.add(Calendar.WEEK_OF_YEAR, 2);
                                         selectedCalendar2.set(year, month, dayOfMonth);
 
                                         // Update the deadline date in the holder with the selected date
@@ -168,46 +171,72 @@ public class FetchPersonalFiles extends AppCompatActivity {
                                 updatedDeadline.get(Calendar.YEAR),
                                 updatedDeadline.get(Calendar.MONTH),
                                 updatedDeadline.get(Calendar.DAY_OF_MONTH)
+
                         );
                         datePickerDialog.show();
                     }
                 });
 
+                Button updateNoteButton = holder.itemView.findViewById(R.id.updateNoteBtn);
+                Button updateOriginButton = holder.itemView.findViewById(R.id.updateOriginBtn);
+
+
                 //If changed the EditText notes, then save newer version in the database. If not just leave.
                 EditText notesFile = holder.itemView.findViewById(R.id.file_notes);
                 EditText originalFile = holder.itemView.findViewById(R.id.file_original);
-                notesFile.addTextChangedListener(new TextWatcher() {
+
+                updateNoteButton.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                        //Do nothing
-                    }
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        String updatedNote = s.toString();
+                    public void onClick(View v) {
+                        // Get the updated note from the EditText
+                        String updatedNote = notesFile.getText().toString();
+
+                        // Update the note in the database
                         DatabaseReference notesRef = FirebaseDatabase.getInstance().getReference()
                                 .child("uploadPersonal").child(userID).child(getRef(holder.getAdapterPosition()).getKey()).child("notes");
                         notesRef.setValue(updatedNote);
+
+                        // Show a message or perform any desired action to indicate the successful update
+                        Toast.makeText(getApplicationContext(), "Changes saved successfully!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                notesFile.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    }
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
                     }
                     @Override
                     public void afterTextChanged(Editable s) {
+                    }
+                });
 
+                updateOriginButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // Get the updated note from the EditText
+                        String updatedOriginal = originalFile.getText().toString();
+
+                        // Update the note in the database
+                        DatabaseReference originalRef = FirebaseDatabase.getInstance().getReference()
+                                .child("uploadPersonal").child(userID).child(getRef(holder.getAdapterPosition()).getKey()).child("originalDoc");
+                        originalRef.setValue(updatedOriginal);
+
+                        // Show a message or perform any desired action to indicate the successful update
+                        Toast.makeText(getApplicationContext(), "Changes saved successfully!", Toast.LENGTH_SHORT).show();
                     }
                 });
                 originalFile.addTextChangedListener(new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                        //Do nothing
                     }
                     @Override
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        String updateOriginal = s.toString();
-                        DatabaseReference originalRef = FirebaseDatabase.getInstance().getReference()
-                                .child("uploadPersonal").child(userID).child(getRef(holder.getAdapterPosition()).getKey()).child("originalDoc");
-                        originalRef.setValue(updateOriginal);
                     }
                     @Override
                     public void afterTextChanged(Editable s) {
-
                     }
                 });
 

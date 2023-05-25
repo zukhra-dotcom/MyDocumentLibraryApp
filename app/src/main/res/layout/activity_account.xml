@@ -38,7 +38,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="45dp"
                 android:padding="10dp"
-                android:text="13th May 2023"
+                android:text="30th May 2023"
                 android:textColor="@color/lighter_charcoal"
                 android:textSize="18sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -95,8 +95,8 @@
             <Button
                 android:id="@+id/findFriends_button"
                 android:layout_width="300dp"
-                android:layout_height="80dp"
-                android:layout_marginTop="50dp"
+                android:layout_height="70dp"
+                android:layout_marginTop="20dp"
                 android:layout_gravity="center"
                 android:textColor="@color/smoky_black"
                 android:textStyle="bold"
@@ -106,10 +106,25 @@
                 android:drawablePadding="8dp"
                 android:text="Find Friends" />
 
+                <Button
+                    android:id="@+id/secret_passcode_button"
+                    android:layout_width="300dp"
+                    android:layout_height="70dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="30dp"
+                    android:gravity="center"
+                    android:textColor="@color/smoky_black"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:backgroundTint="@color/vanilla"
+                    android:drawableLeft="@drawable/baseline_key_24"
+                    android:drawablePadding="8dp"
+                    android:text="Change Secret Passcode" />
+
             <Button
                 android:id="@+id/logout_button"
                 android:layout_width="300dp"
-                android:layout_height="80dp"
+                android:layout_height="70dp"
                 android:layout_marginTop="30dp"
                 android:layout_gravity="center"
                 android:drawableLeft="@drawable/baseline_logout_24"
@@ -123,7 +138,7 @@
             <Button
                 android:id="@+id/delete_account_button"
                 android:layout_width="300dp"
-                android:layout_height="80dp"
+                android:layout_height="70dp"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="30dp"
                 android:gravity="center"
@@ -134,60 +149,11 @@
                 android:drawableLeft="@drawable/baseline_delete_24"
                 android:drawablePadding="8dp"
                 android:text="Delete Account" />
+
         </LinearLayout>
 
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-<!--    <TextView-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:id="@+id/user_email_title"-->
-<!--        android:text="Email:"-->
-<!--        android:textSize="20sp"-->
-<!--        android:textColor="@color/black"-->
-<!--        android:padding="10dp"-->
-<!--        android:gravity="center"-->
-<!--        android:layout_margin="20dp"/>-->
-
-<!--    <TextView-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:id="@+id/user_email"-->
-<!--        android:textSize="20sp"-->
-<!--        android:textColor="@color/black"-->
-<!--        android:padding="10dp"-->
-<!--        android:gravity="center"-->
-<!--        android:layout_margin="50dp"/>-->
-
-<!--    <Button-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:id="@+id/findFriends_button"-->
-<!--        android:layout_marginTop="320dp"-->
-<!--        android:text="Find Friends" />-->
-
-<!--    <Button-->
-<!--        android:layout_width="200dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:id="@+id/logout_button"-->
-<!--        android:text="Logout"-->
-<!--        android:backgroundTint="@color/black"-->
-<!--        android:gravity="center"-->
-<!--        android:drawableLeft="@drawable/baseline_logout_24"-->
-<!--        android:drawablePadding="8dp"-->
-<!--        android:layout_centerHorizontal="true"-->
-<!--        android:layout_marginTop="500dp"/>-->
-
-<!--    <Button-->
-<!--        android:layout_width="200dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:id="@+id/delete_account_button"-->
-<!--        android:text="Delete Account"-->
-<!--        android:backgroundTint="#FF0000"-->
-<!--        android:gravity="center"-->
-<!--        android:drawablePadding="8dp"-->
-<!--        android:layout_centerHorizontal="true"-->
-<!--        android:layout_marginTop="550dp"/>-->
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:layout_width="match_parent"
@@ -197,7 +163,7 @@
         android:background="@drawable/bottom_navigation"
         android:layout_marginEnd="20dp"
         android:layout_marginStart="20dp"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="5dp"
         android:layout_marginTop="30dp"
         android:elevation="2dp"
         app:menu="@menu/bottom_nav_menu"

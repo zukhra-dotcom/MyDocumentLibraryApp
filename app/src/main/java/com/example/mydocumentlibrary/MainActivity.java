@@ -5,10 +5,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mydocumentlibrary.categories.BillsPage;
 import com.example.mydocumentlibrary.categories.EducationPage;
@@ -23,18 +26,43 @@ import com.example.mydocumentlibrary.databinding.ActivityMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.Settings;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -51,8 +79,27 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton moveToBillsPage;
     private ImageButton moveToSecretPage;
 
+    //storing for all users SecretsPasscode = "secret" then it would be updated for each user
+    private DatabaseReference userRef;
+    private DatabaseReference passwordRef;
+    FloatingActionButton fab;
+
     //Moving to QuickPicture page
     Button moveToQuickPicture;
+
+    private RecyclerView recyclerExpirations;
+    private ExpirationsAdapter expirationAdapter;
+    private List<PutPDF> documentListInExpirations;
+    private DatabaseReference personalRef;
+    private DatabaseReference educationalRef;
+    private String title;
+    private String deadlineDate;
+    private String message;
+    String userID;
+    private static final int NOTIFICATION_ID = 1;
+    private static final String CHANNEL_ID = "MyChannel";
+    private static final int PERMISSION_REQUEST_CODE = 1;
+    private static final int REQUEST_NOTIFICATION_POLICY_ACCESS = 1;
 
 
     //Adding new scan file
@@ -66,8 +113,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        userRef = FirebaseDatabase.getInstance().getReference().child("Users");
+        passwordRef = FirebaseDatabase.getInstance().getReference().child("Passwords");
+
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setSelectedItemId(R.id.dashboard);
+        fab = findViewById(R.id.fab);
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
             switch (item.getItemId()){
@@ -75,54 +126,28 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 case R.id.account:
                     startActivity(new Intent(getApplicationContext(), Account.class));
-                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_in_left);
                     finish();
                     return true;
                 case R.id.notes:
                     startActivity(new Intent(getApplicationContext(), Notes.class));
-                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_in_left);
                     finish();
                     return true;
                 case R.id.notification:
                     startActivity(new Intent(getApplicationContext(), Notifications.class));
-                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_in_left);
                     finish();
                     return true;
             }
             return false;
         });
-        //Navigation Bar activities
-//        binding = ActivityMainBinding.inflate(getLayoutInflater());
-//        setContentView(binding.getRoot());
 
-//        replaceFragment(new NavigationFragment());
-//        binding.bottomNavigationView.setBackground(null);
+        fab.setOnClickListener(view -> {
+            // Perform your desired action here
+            startActivity(new Intent(getApplicationContext(), Adding.class));
+            finish();
+        });
 
-//        binding.bottomNavigationView.setOnItemSelectedListener(item -> {
-//            switch (item.getItemId()){
-//                case R.id.navigation_frag:
-//                    replaceFragment(new NavigationFragment());
-//                    break;
-//
-//                case R.id.account:
-//                    replaceFragment(new AccountFragment());
-//                    break;
-//
-//                case R.id.fab:
-//                    replaceFragment(new AddingNewFragment());
-//                    break;
-//
-//                case R.id.notes:
-//                    replaceFragment(new NotesFragment());
-//                    break;
-//
-//                case R.id.notification:
-//                    replaceFragment(new NotificationFragment());
-//                    break;
-//            }
-//            return true;
-//        });
-
+        //storing default password for all users
+        storeDefaultPasswordForAllUsers();
 
         //setContentView(R.layout.activity_main); это было в начале автоматически
 
@@ -209,6 +234,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void storeDefaultPasswordForAllUsers() {
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot userSnapshot : snapshot.getChildren()) {
+                    if (!snapshot.exists()){
+                    String userID = userSnapshot.getKey();
+                    DatabaseReference userPasswordRef = passwordRef.child(userID).child("passwordSecrets");
+                    userPasswordRef.setValue("secret");
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(MainActivity.this, "Failed to add passwords for users", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 
 //    private void replaceFragment(Fragment fragment){
 //        FragmentManager fragmentManager = getSupportFragmentManager();
