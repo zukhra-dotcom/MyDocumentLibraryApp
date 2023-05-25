@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.DatePickerDialog;
 import android.app.DownloadManager;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -171,6 +172,9 @@ public class FetchTravelFiles extends AppCompatActivity {
 
                 Button updateNoteButton = holder.itemView.findViewById(R.id.updateNoteBtn);
                 Button updateOriginButton = holder.itemView.findViewById(R.id.updateOriginBtn);
+                ImageButton downloadFileBtn = holder.itemView.findViewById(R.id.file_download);
+                TextView fileTypeText = holder.itemView.findViewById(R.id.file_type);
+                fileTypeText.setVisibility(View.GONE);
 
 
                 //If changed the EditText notes, then save newer version in the database. If not just leave.
@@ -243,8 +247,7 @@ public class FetchTravelFiles extends AppCompatActivity {
                     }
                 });
 
-                //download the document by clicking to the CardView to the mobile downloads path
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                downloadFileBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         String fileUrl = model.getUrl();
@@ -255,6 +258,24 @@ public class FetchTravelFiles extends AppCompatActivity {
                                 .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, model.getName());
                         DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
                         downloadManager.enqueue(request);
+                    }
+                });
+
+                //download the document by clicking to the CardView to the mobile downloads path
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String fileUrl = model.getUrl();
+
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setDataAndType(Uri.parse(fileUrl), "application/pdf");
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                        try {
+                            startActivity(intent);
+                        } catch (ActivityNotFoundException e) {
+                            Toast.makeText(getApplicationContext(), "No PDF viewer application found", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
             }

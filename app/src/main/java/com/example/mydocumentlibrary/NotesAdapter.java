@@ -41,8 +41,9 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
         holder.deleteDoc.setVisibility(View.GONE);
         holder.permission.setVisibility(View.GONE);
         holder.updateOriginal.setVisibility(View.GONE);
+        holder.downloadDoc.setVisibility(View.GONE);
         holder.updateNote.setEnabled(false);
-        holder.fileTypeTextView.setText(fileType);
+        holder.fileTypeTextView.setText(documentByNotes.getFileType());
     }
 
     @Override
@@ -57,6 +58,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
         TextView original;
         ImageButton changeExpirationDate;
         ImageButton deleteDoc;
+        ImageButton downloadDoc;
         Switch permission;
         Button updateNote, updateOriginal;
         TextView fileTypeTextView;
@@ -74,6 +76,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
             updateNote = itemView.findViewById(R.id.updateNoteBtn);
             updateOriginal = itemView.findViewById(R.id.updateOriginBtn);
             fileTypeTextView = itemView.findViewById(R.id.file_type);
+            downloadDoc = itemView.findViewById(R.id.file_download);
         }
     }
 }

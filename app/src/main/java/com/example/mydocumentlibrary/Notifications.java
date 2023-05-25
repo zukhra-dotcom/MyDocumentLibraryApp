@@ -37,6 +37,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -53,8 +54,7 @@ public class Notifications extends AppCompatActivity {
     private RecyclerView recyclerExpirations;
     private ExpirationsAdapter expirationAdapter;
     private List<PutPDF> documentListInExpirations;
-    private DatabaseReference personalRef;
-    private DatabaseReference educationalRef;
+    private DatabaseReference personalRef, educationalRef, billsRef, healthRef, jobRef, secretsRef, travelRef;
     private String title;
     private String deadlineDate;
     private String message;
@@ -137,26 +137,18 @@ public class Notifications extends AppCompatActivity {
         // Query for uploadPersonal documents
         personalRef = databaseRef.child("uploadPersonal").child(userID);
         educationalRef = databaseRef.child("uploadEducational").child(userID);
+        billsRef = databaseRef.child("uploadBills").child(userID);
+        healthRef = databaseRef.child("uploadHealth").child(userID);
+        jobRef = databaseRef.child("uploadJob").child(userID);
+        secretsRef = databaseRef.child("uploadSecrets").child(userID);
+        travelRef = databaseRef.child("uploadTravel").child(userID);
 
-        ChildEventListener personalChildEventListener = new ChildEventListener() {
+        ValueEventListener personalValueEventListener = new ValueEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                addDocumentToList(snapshot, personalRef);
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                // Handle document changes if necessary
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-                // Handle document removal if necessary
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                // Handle document movement if necessary
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                    addDocumentToList(childSnapshot, personalRef, "Personal");
+                }
             }
 
             @Override
@@ -165,25 +157,12 @@ public class Notifications extends AppCompatActivity {
             }
         };
 
-        ChildEventListener educationalChildEventListener = new ChildEventListener() {
+        ValueEventListener educationalValueEventListener = new ValueEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                addDocumentToList(snapshot, educationalRef);
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                // Handle document changes if necessary
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-                // Handle document removal if necessary
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                // Handle document movement if necessary
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                    addDocumentToList(childSnapshot, educationalRef, "Educational");
+                }
             }
 
             @Override
@@ -191,13 +170,82 @@ public class Notifications extends AppCompatActivity {
                 Toast.makeText(Notifications.this, "Error in retrieving educational documents: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         };
+        ValueEventListener billsValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                    addDocumentToList(childSnapshot, billsRef, "Bills");
+                }
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(Notifications.this, "Error in retrieving personal documents: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        };
+        ValueEventListener healthValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                    addDocumentToList(childSnapshot, healthRef, "Health");
+                }
+            }
 
-        personalRef.addChildEventListener(personalChildEventListener);
-        educationalRef.addChildEventListener(educationalChildEventListener);
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(Notifications.this, "Error in retrieving personal documents: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        };
+        ValueEventListener jobValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                    addDocumentToList(childSnapshot, jobRef, "Job");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(Notifications.this, "Error in retrieving personal documents: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        };
+        ValueEventListener secretsValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                    addDocumentToList(childSnapshot, secretsRef, "Secrets");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(Notifications.this, "Error in retrieving personal documents: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        };
+        ValueEventListener travelValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                    addDocumentToList(childSnapshot, travelRef, "Travel");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(Notifications.this, "Error in retrieving personal documents: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        personalRef.addListenerForSingleValueEvent(personalValueEventListener);
+        educationalRef.addListenerForSingleValueEvent(educationalValueEventListener);
+        billsRef.addListenerForSingleValueEvent(billsValueEventListener);
+        healthRef.addListenerForSingleValueEvent(healthValueEventListener);
+        jobRef.addListenerForSingleValueEvent(jobValueEventListener);
+        secretsRef.addListenerForSingleValueEvent(secretsValueEventListener);
+        travelRef.addListenerForSingleValueEvent(travelValueEventListener);
     }
 
-    private void addDocumentToList(DataSnapshot snapshot, DatabaseReference documentRef) {
+    private void addDocumentToList(DataSnapshot snapshot, DatabaseReference documentRef, String fileType) {
         PutPDF putPDF = snapshot.getValue(PutPDF.class);
         if (putPDF != null && putPDF.getDeadlineDate() != null && !putPDF.getDeadlineDate().isEmpty()) {
             documentListInExpirations.add(putPDF);
@@ -215,12 +263,24 @@ public class Notifications extends AppCompatActivity {
                     return 0;
                 }
             });
-            View itemView = LayoutInflater.from(Notifications.this).inflate(R.layout.single_view_files, null);
-            TextView fileTypeTextView = itemView.findViewById(R.id.file_type);
+            // Set the fileType value based on the database node
             if (documentRef.equals(personalRef)) {
-                fileTypeTextView.setText("Personal");
+                putPDF.setFileType("Personal");
             } else if (documentRef.equals(educationalRef)) {
-                fileTypeTextView.setText("Educational");
+                putPDF.setFileType("Educational");
+            } else if (documentRef.equals(billsRef)) {
+                putPDF.setFileType("Bills");
+            } else if (documentRef.equals(healthRef)) {
+                putPDF.setFileType("Health");
+            } else if (documentRef.equals(jobRef)) {
+                putPDF.setFileType("Job");
+            } else if (documentRef.equals(secretsRef)) {
+                putPDF.setFileType("Secrets");
+            } else if (documentRef.equals(travelRef)) {
+                putPDF.setFileType("Travel");
+            } else {
+                // Handle other cases or set a default file type
+                putPDF.setFileType("Unknown");
             }
 
             checkAndNotifyExpirations(putPDF);

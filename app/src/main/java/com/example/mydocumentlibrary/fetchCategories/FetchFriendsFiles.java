@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.DatePickerDialog;
 import android.app.DownloadManager;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -108,30 +109,39 @@ public class FetchFriendsFiles extends AppCompatActivity {
                     adapter = new FirebaseRecyclerAdapter<PutPDF, FileMyViewHolder>(options) {
                         @Override
                         protected void onBindViewHolder(@NonNull FileMyViewHolder holder, int position, @NonNull PutPDF model) {
+                            ImageButton downloadFileBtn = null;
                             if (model.isPermissionForFriends()) {
-                            holder.name.setText(model.getName());
-                            holder.date.setText(model.getCreatedDate());
-                            holder.notes.setText(model.getNotes());
-                            holder.deadline.setText(model.getDeadlineDate());
+                                holder.name.setText(model.getName());
+                                holder.date.setText(model.getCreatedDate());
+                                holder.notes.setText(model.getNotes());
+                                holder.deadline.setText(model.getDeadlineDate());
 
-                            ImageButton deadlineChangeBtn = holder.itemView.findViewById(R.id.file_deadline);
-                            ImageButton deleteFileBtn = holder.itemView.findViewById(R.id.file_delete);
-                            EditText notesFileTxt = holder.itemView.findViewById(R.id.file_notes);
-                            EditText originalFileTxt = holder.itemView.findViewById(R.id.file_original);
-                            Switch permissionFileSwt = holder.itemView.findViewById(R.id.file_permissionSwitch);
+                                ImageButton deadlineChangeBtn = holder.itemView.findViewById(R.id.file_deadline);
+                                ImageButton deleteFileBtn = holder.itemView.findViewById(R.id.file_delete);
+                                Button updateOriginalFile = holder.itemView.findViewById(R.id.updateOriginBtn);
+                                Button updateNoteBtn = holder.itemView.findViewById(R.id.updateNoteBtn);
+                                downloadFileBtn = holder.itemView.findViewById(R.id.file_download);
+                                EditText notesFileTxt = holder.itemView.findViewById(R.id.file_notes);
+                                EditText originalFileTxt = holder.itemView.findViewById(R.id.file_original);
+                                Switch permissionFileSwt = holder.itemView.findViewById(R.id.file_permissionSwitch);
 
-                            deadlineChangeBtn.setVisibility(View.GONE);
-                            deleteFileBtn.setVisibility(View.GONE);
-                            notesFileTxt.setEnabled(false);
-                            originalFileTxt.setEnabled(false);
-                            permissionFileSwt.setVisibility(View.GONE);
+
+                                updateNoteBtn.setId(R.id.file_download);
+                                downloadFileBtn.setId(R.id.updateNoteBtn);
+                                deadlineChangeBtn.setVisibility(View.GONE);
+                                deleteFileBtn.setVisibility(View.GONE);
+                                updateNoteBtn.setVisibility(View.GONE);
+                                updateOriginalFile.setVisibility(View.GONE);
+                                notesFileTxt.setEnabled(false);
+                                originalFileTxt.setVisibility(View.GONE);
+                                permissionFileSwt.setVisibility(View.GONE);
                             } else {
                                 // Hiding the view for documents without permission
                                 holder.itemView.setVisibility(View.GONE);
                                 holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
                             }
 
-                            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                            downloadFileBtn.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     String fileUrl = model.getUrl();
@@ -151,6 +161,26 @@ public class FetchFriendsFiles extends AppCompatActivity {
 
                                     DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
                                     downloadManager.enqueue(request);
+                                }
+                            });
+
+                            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    String fileUrl = model.getUrl();
+
+                                    // Assuming the fileUrl is a direct link to a PDF document
+
+                                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                                    intent.setDataAndType(Uri.parse(fileUrl), "application/pdf");
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                                    try {
+                                        startActivity(intent);
+                                    } catch (ActivityNotFoundException e) {
+                                        // Handle exception when no PDF viewer application is available
+                                        Toast.makeText(getApplicationContext(), "No PDF viewer application found", Toast.LENGTH_SHORT).show();
+                                    }
                                 }
                             });
                         }

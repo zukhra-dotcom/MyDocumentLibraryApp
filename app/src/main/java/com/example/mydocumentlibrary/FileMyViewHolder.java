@@ -15,7 +15,7 @@ import org.w3c.dom.Text;
 public class FileMyViewHolder extends RecyclerView.ViewHolder { //class that takes data from single_view_files.xml
     public TextView name, date, deadline;
     public EditText notes, original;
-    public ImageButton delete;
+    public ImageButton delete, download;
     public Switch permissionFriends;
     public TextView category;
     public FileMyViewHolder(@NonNull View itemView) {
@@ -26,6 +26,7 @@ public class FileMyViewHolder extends RecyclerView.ViewHolder { //class that tak
         original = itemView.findViewById(R.id.file_original);
         deadline = itemView.findViewById(R.id.file_deadlineDate);
         delete = itemView.findViewById(R.id.file_delete);
+        download = itemView.findViewById(R.id.file_download);
         permissionFriends = itemView.findViewById(R.id.file_permissionSwitch);
         category = itemView.findViewById(R.id.file_type);
     }

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,8 +37,7 @@ public class Notes extends AppCompatActivity {
     private RecyclerView recyclerNotes;
     private NotesAdapter notesAdapter;
     private List<PutPDF> documentListInNotes;
-    private DatabaseReference personalRef;
-    private DatabaseReference educationalRef;
+    private DatabaseReference personalRef, educationalRef, billsRef, healthRef, jobRef, secretsRef, travelRef;
     FloatingActionButton fab;
 
     String userID;
@@ -88,6 +88,7 @@ public class Notes extends AppCompatActivity {
             startActivity(new Intent(getApplicationContext(), Adding.class));
             finish();
         });
+
     }
 
     private void retrieveDocumentsFromDatabase(){
@@ -103,6 +104,12 @@ public class Notes extends AppCompatActivity {
         // Query for uploadPersonal documents
         personalRef = databaseRef.child("uploadPersonal").child(userID);
         educationalRef = databaseRef.child("uploadEducational").child(userID);
+        billsRef = databaseRef.child("uploadBills").child(userID);
+        healthRef = databaseRef.child("uploadHealth").child(userID);
+        jobRef = databaseRef.child("uploadJob").child(userID);
+        secretsRef = databaseRef.child("uploadSecrets").child(userID);
+        travelRef = databaseRef.child("uploadTravel").child(userID);
+
 
         ValueEventListener personalValueEventListener = new ValueEventListener() {
             @Override
@@ -131,9 +138,79 @@ public class Notes extends AppCompatActivity {
                 Toast.makeText(Notes.this, "Error in retrieving educational documents: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         };
+        ValueEventListener billsValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                    addDocumentToList(childSnapshot, billsRef, "Bills");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(Notes.this, "Error in retrieving personal documents: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        };
+        ValueEventListener healthValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                    addDocumentToList(childSnapshot, healthRef, "Health");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(Notes.this, "Error in retrieving personal documents: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        };
+        ValueEventListener jobValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                    addDocumentToList(childSnapshot, jobRef, "Job");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(Notes.this, "Error in retrieving personal documents: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        };
+        ValueEventListener secretsValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                    addDocumentToList(childSnapshot, secretsRef, "Secrets");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(Notes.this, "Error in retrieving personal documents: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        };
+        ValueEventListener travelValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                    addDocumentToList(childSnapshot, travelRef, "Travel");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(Notes.this, "Error in retrieving personal documents: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        };
 
         personalRef.addListenerForSingleValueEvent(personalValueEventListener);
         educationalRef.addListenerForSingleValueEvent(educationalValueEventListener);
+        billsRef.addListenerForSingleValueEvent(billsValueEventListener);
+        healthRef.addListenerForSingleValueEvent(healthValueEventListener);
+        jobRef.addListenerForSingleValueEvent(jobValueEventListener);
+        secretsRef.addListenerForSingleValueEvent(secretsValueEventListener);
+        travelRef.addListenerForSingleValueEvent(travelValueEventListener);
     }
 
     private void addDocumentToList(DataSnapshot snapshot, DatabaseReference documentRef, String fileType) {
@@ -148,7 +225,25 @@ public class Notes extends AppCompatActivity {
                     return notes1.compareToIgnoreCase(notes2);
                 }
             });
-            putPDF.setFileType(fileType);
+            // Set the fileType value based on the database node
+            if (documentRef.equals(personalRef)) {
+                putPDF.setFileType("Personal");
+            } else if (documentRef.equals(educationalRef)) {
+                putPDF.setFileType("Educational");
+            } else if (documentRef.equals(billsRef)) {
+                putPDF.setFileType("Bills");
+            } else if (documentRef.equals(healthRef)) {
+                putPDF.setFileType("Health");
+            } else if (documentRef.equals(jobRef)) {
+                putPDF.setFileType("Job");
+            } else if (documentRef.equals(secretsRef)) {
+                putPDF.setFileType("Secrets");
+            } else if (documentRef.equals(travelRef)) {
+                putPDF.setFileType("Travel");
+            } else {
+                // Handle other cases or set a default file type
+                putPDF.setFileType("Unknown");
+            }
 
             if (notesAdapter == null) {
                 notesAdapter = new NotesAdapter(documentListInNotes);

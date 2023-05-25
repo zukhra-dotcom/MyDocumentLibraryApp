@@ -41,6 +41,9 @@ public class ExpirationsAdapter extends RecyclerView.Adapter<ExpirationsAdapter.
         holder.permission.setVisibility(View.GONE);
         holder.updateOriginal.setVisibility(View.GONE);
         holder.updateNote.setEnabled(false);
+        holder.downloadDoc.setVisibility(View.GONE);
+        holder.fileTypeTextView.setText(documentByExpirations.getFileType());
+
     }
 
     @Override
@@ -55,8 +58,10 @@ public class ExpirationsAdapter extends RecyclerView.Adapter<ExpirationsAdapter.
         TextView original;
         ImageButton changeExpirationDate;
         ImageButton deleteDoc;
+        ImageButton downloadDoc;
         Switch permission;
         Button updateNote, updateOriginal;
+        TextView fileTypeTextView;
 
         public ExpirationViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -70,6 +75,8 @@ public class ExpirationsAdapter extends RecyclerView.Adapter<ExpirationsAdapter.
             permission = itemView.findViewById(R.id.file_permissionSwitch);
             updateNote = itemView.findViewById(R.id.updateNoteBtn);
             updateOriginal = itemView.findViewById(R.id.updateOriginBtn);
+            downloadDoc = itemView.findViewById(R.id.file_download);
+            fileTypeTextView = itemView.findViewById(R.id.file_type);
         }
     }
 }
