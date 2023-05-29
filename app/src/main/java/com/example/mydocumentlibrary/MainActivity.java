@@ -149,7 +149,6 @@ public class MainActivity extends AppCompatActivity {
         //storing default password for all users
         storeDefaultPasswordForAllUsers();
 
-        //setContentView(R.layout.activity_main); это было в начале автоматически
 
         //moving from main nav page to personal page
         moveToPersonalPage = findViewById(R.id.personalPage);

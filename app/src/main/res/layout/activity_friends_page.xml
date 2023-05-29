@@ -10,14 +10,15 @@
 
     <Button
         android:id="@+id/previous_main"
-        android:layout_width="100dp"
+        android:layout_width="150dp"
         android:layout_height="48dp"
-        android:layout_margin="15dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/charcoal"
+        android:drawableLeft="@drawable/baseline_arrow_back_24"
         android:text="Categories"
-        android:textColor="@color/black"
+        android:textColor="@color/cosmic_latte"
         android:textSize="10sp"
-        android:backgroundTint="@color/cosmic_latte"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

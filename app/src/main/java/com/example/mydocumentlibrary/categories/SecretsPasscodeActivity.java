@@ -74,7 +74,6 @@ public class SecretsPasscodeActivity extends AppCompatActivity {
                     Toast.makeText(SecretsPasscodeActivity.this, "Successfully entered", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(SecretsPasscodeActivity.this, SecretsPage.class);
                     startActivity(intent);
-                    finish();
                 } else {
                     defaultPass.setVisibility(View.VISIBLE);
                     Toast.makeText(SecretsPasscodeActivity.this, "Incorrect credentials", Toast.LENGTH_SHORT).show();
@@ -98,64 +97,6 @@ public class SecretsPasscodeActivity extends AppCompatActivity {
                 Toast.makeText(SecretsPasscodeActivity.this, "Failed to read password from the database", Toast.LENGTH_SHORT).show();
             }
         });
+
     }
 }
-
-
-
-
-
-//        if (password.getText().toString().equals("secret")) {
-//            Toast.makeText(getApplicationContext(), "Successfully entered",Toast.LENGTH_SHORT).show();
-//
-//            Intent intent = new Intent(SecretsPasscodeActivity.this, SecretsPage.class);
-//            startActivity(intent);
-//        }
-//
-//        else {
-//            Toast.makeText(getApplicationContext(), "Incorrect credentials!",Toast.LENGTH_SHORT).show();
-//            numberOfRemainingLoginAttempts--;
-//
-//            attempts.setVisibility(View.VISIBLE);
-//            numberOfAttempts.setVisibility(View.VISIBLE);
-//            numberOfAttempts.setText(Integer.toString(numberOfRemainingLoginAttempts));
-//
-//            if (numberOfRemainingLoginAttempts == 0) {
-//                enter.setEnabled(false);
-//                enteringLocked.setVisibility(View.VISIBLE);
-//                enteringLocked.setBackgroundColor(Color.RED);
-//                enteringLocked.setText("Entering blocked!!!");
-//            }
-//        }
-
-
-
-
-
-
-//public class SecretsPasscodeActivity extends AppCompatActivity {
-
-//    PasscodeView passcodeView;
-
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_secrets_passcode);
-//
-//        passcodeView = findViewById(R.id.passcodeview);
-//        passcodeView.setPasscodeLength(5)
-//                .setLocalPasscode("12345")
-//                .setListener(new PasscodeView.PasscodeViewListener() {
-//                    @Override
-//                    public void onFail() {
-//                        Toast.makeText(SecretsPasscodeActivity.this, "Password is wrong!", Toast.LENGTH_SHORT).show();
-//                    }
-//
-//                    @Override
-//                    public void onSuccess(String number) {
-//                        Intent intent_passcode = new Intent(SecretsPasscodeActivity.this, SecretsPage.class);
-//                        startActivity(intent_passcode);
-//                    }
-//                });
-//    }
-//}

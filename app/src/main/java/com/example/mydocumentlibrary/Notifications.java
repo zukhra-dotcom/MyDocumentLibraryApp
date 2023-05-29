@@ -252,7 +252,7 @@ public class Notifications extends AppCompatActivity {
             Collections.sort(documentListInExpirations, new Comparator<PutPDF>() {
                 @Override
                 public int compare(PutPDF document1, PutPDF document2) {
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
                     try {
                         Date deadlineDate1 = dateFormat.parse(document1.getDeadlineDate());
                         Date deadlineDate2 = dateFormat.parse(document2.getDeadlineDate());
@@ -290,15 +290,17 @@ public class Notifications extends AppCompatActivity {
 
     private void checkAndNotifyExpirations(PutPDF putPDF) {
         Log.d("Notification", "checkAndNotifyExpirations() called");
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
         try {
             Date expirationDate = dateFormat.parse(putPDF.getDeadlineDate());
             Date today = new Date();
+            Log.d("Notification", "Expiration Date: " + dateFormat.format(expirationDate));
+            Log.d("Notification", "Today's Date: " + dateFormat.format(today));
 
             if (expirationDate != null && today.before(expirationDate)) {
                 long diffInMillis = expirationDate.getTime() - today.getTime();
                 long diffInDays = diffInMillis / (24 * 60 * 60 * 1000);
-
+                Log.d("Notification", "Difference in Days: " + diffInDays);
                 if (diffInDays == 2) {
                     // Generate a unique notification ID for each document
                     int notificationId = putPDF.getName().hashCode();
@@ -319,12 +321,14 @@ public class Notifications extends AppCompatActivity {
 
     private void showNotification(String title, String deadlineDate, String message, int notificationId) {
         // Retrieve the current date
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        Log.d("Notification", "showNotification() called");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
         String currentDate = dateFormat.format(new Date());
 
         try {
             // Parse the deadline date
             Date deadline = dateFormat.parse(deadlineDate);
+            Log.d("Notification", "deadline date: " + deadline);
 
             // Calculate the number of days remaining until the deadline
             long diffInMillies = deadline.getTime() - dateFormat.parse(currentDate).getTime();
@@ -335,7 +339,6 @@ public class Notifications extends AppCompatActivity {
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                         .setSmallIcon(R.drawable.notification_icon)
                         .setContentTitle("Your document: " + title + " expires in 2 days!!!!")
-                        .setContentText("on " + deadlineDate)
                         .setContentText("notes: " + message)
                         .setPriority(NotificationCompat.PRIORITY_HIGH)
                         .setCategory(NotificationCompat.CATEGORY_ALARM);

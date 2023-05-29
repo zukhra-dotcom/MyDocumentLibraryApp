@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -119,17 +121,6 @@ public class ViewFriendActvity extends AppCompatActivity {
             finish();
         });
 
-        btnPerform.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(CurrentState.equals("friend")){
-                    String friendUID = userID;
-                    Intent intent = new Intent(ViewFriendActvity.this, FetchFriendsFiles.class);
-                    intent.putExtra("uid", friendUID);
-                    startActivity(intent);
-                }
-            }
-        });
     }
     private void Unfriend(String userID){
         if(CurrentState.equals("friend")){
@@ -180,6 +171,17 @@ public class ViewFriendActvity extends AppCompatActivity {
                     btnPerform.setText("View Docs");
                     btnDecline.setText("Unfriend");
                     btnDecline.setVisibility(View.VISIBLE);
+                    btnPerform.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(CurrentState.equals("friend")){
+                                String friendUID = userID;
+                                Intent intent = new Intent(ViewFriendActvity.this, FetchFriendsFiles.class);
+                                intent.putExtra("uid", friendUID);
+                                startActivity(intent);
+                            }
+                        }
+                    });
                 }
             }
 
@@ -197,7 +199,17 @@ public class ViewFriendActvity extends AppCompatActivity {
                     btnPerform.setText("View Docs");
                     btnDecline.setText("Unfriend");
                     btnDecline.setVisibility(View.VISIBLE);
-
+                    btnPerform.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(CurrentState.equals("friend")){
+                                String friendUID = userID;
+                                Intent intent = new Intent(ViewFriendActvity.this, FetchFriendsFiles.class);
+                                intent.putExtra("uid", friendUID);
+                                startActivity(intent);
+                            }
+                        }
+                    });
 
                 }
             }
@@ -316,6 +328,17 @@ public class ViewFriendActvity extends AppCompatActivity {
                                             btnPerform.setText("View Docs");
                                             btnDecline.setText("Unfriend");
                                             btnDecline.setVisibility(View.VISIBLE);
+                                            btnPerform.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    if(CurrentState.equals("friend")){
+                                                        String friendUID = userID;
+                                                        Intent intent = new Intent(ViewFriendActvity.this, FetchFriendsFiles.class);
+                                                        intent.putExtra("uid", friendUID);
+                                                        startActivity(intent);
+                                                    }
+                                                }
+                                            });
                                         }
                                     });
                                 }

@@ -148,10 +148,9 @@ public class EducationPage extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 12 && resultCode == RESULT_OK && data != null && data.getData() != null) {
-//            uploadPDF.setEnabled(true);
-//            createDeadline.setEnabled(true);
-//            //
-//            permissionSwitch.setEnabled(true);
+            uploadPDF.setEnabled(true);
+            createDeadline.setEnabled(true);
+            permissionSwitch.setEnabled(true);
             Uri pdfUri = data.getData();
             selectPDF.setText("File Selected");
             showDeadlineText.setVisibility(View.VISIBLE);
@@ -175,7 +174,7 @@ public class EducationPage extends AppCompatActivity {
                             if (selectedCalendar.before(calendar)) {
                                 Toast.makeText(EducationPage.this, "Please select a date on or after today", Toast.LENGTH_SHORT).show();
                             } else {
-                                showDeadlineText.setText(dayOfMonth + "." + month + "." + year);
+                                showDeadlineText.setText(dayOfMonth + "." + (month + 1) + "." + year);
                             }
                         }
                     }, y, m, d);

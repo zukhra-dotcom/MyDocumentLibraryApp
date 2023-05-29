@@ -297,7 +297,7 @@ public class Adding extends AppCompatActivity {
 
                         //While uploading new file identify uploadDate
                         Date date = new Date();
-                        SimpleDateFormat formatter = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
+                        SimpleDateFormat formatter = new SimpleDateFormat("dd-M-yyyy");
                         String strDate = formatter.format(date);
 
                         PutPDF putPDF = new PutPDF(selectPDF.getText().toString(), uri.toString(), strDate);

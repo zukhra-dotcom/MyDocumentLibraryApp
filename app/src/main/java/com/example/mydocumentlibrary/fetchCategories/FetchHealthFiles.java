@@ -170,41 +170,65 @@ public class FetchHealthFiles extends AppCompatActivity {
                     }
                 });
 
+                Button updateNoteButton = holder.itemView.findViewById(R.id.updateNoteBtn);
+                Button updateOriginButton = holder.itemView.findViewById(R.id.updateOriginBtn);
+
                 //If changed the EditText notes, then save newer version in the database. If not just leave.
                 EditText notesFile = holder.itemView.findViewById(R.id.file_notes);
                 EditText originalFile = holder.itemView.findViewById(R.id.file_original);
-                notesFile.addTextChangedListener(new TextWatcher() {
+
+                updateNoteButton.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                        //Do nothing
-                    }
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        String updatedNote = s.toString();
+                    public void onClick(View v) {
+                        // Get the updated note from the EditText
+                        String updatedNote = notesFile.getText().toString();
+
+                        // Update the note in the database
                         DatabaseReference notesRef = FirebaseDatabase.getInstance().getReference()
                                 .child("uploadHealth").child(userID).child(getRef(holder.getAdapterPosition()).getKey()).child("notes");
                         notesRef.setValue(updatedNote);
+
+                        // Show a message or perform any desired action to indicate the successful update
+                        Toast.makeText(getApplicationContext(), "Changes saved successfully!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                notesFile.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    }
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
                     }
                     @Override
                     public void afterTextChanged(Editable s) {
+                    }
+                });
 
+                updateOriginButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // Get the updated note from the EditText
+                        String updatedOriginal = originalFile.getText().toString();
+
+                        // Update the note in the database
+                        DatabaseReference originalRef = FirebaseDatabase.getInstance().getReference()
+                                .child("uploadHealth").child(userID).child(getRef(holder.getAdapterPosition()).getKey()).child("originalDoc");
+                        originalRef.setValue(updatedOriginal);
+
+                        // Show a message or perform any desired action to indicate the successful update
+                        Toast.makeText(getApplicationContext(), "Changes saved successfully!", Toast.LENGTH_SHORT).show();
                     }
                 });
                 originalFile.addTextChangedListener(new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                        //Do nothing
                     }
                     @Override
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        String updateOriginal = s.toString();
-                        DatabaseReference originalRef = FirebaseDatabase.getInstance().getReference()
-                                .child("uploadHealth").child(userID).child(getRef(holder.getAdapterPosition()).getKey()).child("originalDoc");
-                        originalRef.setValue(updateOriginal);
                     }
                     @Override
                     public void afterTextChanged(Editable s) {
-
                     }
                 });
 

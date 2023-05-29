@@ -23,6 +23,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -146,7 +147,7 @@ public class FetchPersonalFiles extends AppCompatActivity {
                     public void onClick(View v) {
                         String currentDeadlineDate = holder.deadline.getText().toString();
                         Calendar updatedDeadline = Calendar.getInstance();
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
                         try {
                             updatedDeadline.setTime(dateFormat.parse(currentDeadlineDate));
                         } catch (ParseException e) {

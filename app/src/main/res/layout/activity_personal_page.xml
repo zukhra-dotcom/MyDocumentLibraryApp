@@ -133,6 +133,28 @@
                     android:layout_centerHorizontal="true"
                     android:text="Create Deadline"/>
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="315dp"
+                    android:layout_marginStart="110dp"
+                    android:layout_marginEnd="100dp"
+                    android:layout_marginBottom="160dp"
+                    android:text="Enable permission: "
+                    android:textColor="@color/charcoal"
+                    android:textSize="14sp" />
+
+                <Switch
+                    android:id="@+id/permissionSwitchFile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginTop="0dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginEnd="100dp"
+                    android:layout_marginBottom="160dp" />
+
                 <Button
                 android:id="@+id/uploadFile"
                 android:layout_width="200dp"
@@ -148,20 +170,10 @@
                     android:layout_width="200dp"
                     android:layout_height="50dp"
                     app:srcCompat="@drawable/ic_baseline_camera_alt_24"
-                    android:layout_marginTop="340dp"
+                    android:layout_marginTop="350dp"
                     android:layout_centerHorizontal="true"
                     android:background="#34549D"
                     android:onClick="startCameraScan" />
-
-                <Switch
-                    android:id="@+id/permissionSwitchFile"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginTop="0dp"
-                    android:layout_marginEnd="53dp"
-                    android:layout_marginBottom="189dp" />
 
                 <ImageView
                     android:layout_width="300dp"
@@ -171,6 +183,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_below="@+id/camera_scan"/>
             </RelativeLayout>
+
         </RelativeLayout>
     </RelativeLayout>
 </ScrollView>

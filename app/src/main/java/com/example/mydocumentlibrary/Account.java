@@ -25,6 +25,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 public class Account extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth;
@@ -32,6 +36,7 @@ public class Account extends AppCompatActivity {
     private Button logoutBtn, deleteAccountBtn, findFriendsBtn, changeSecretsPass;
     private TextView userEmail;
     private String userID;
+    private TextView todayDate;
     FloatingActionButton fab;
 
     @Override
@@ -48,6 +53,7 @@ public class Account extends AppCompatActivity {
         findFriendsBtn = findViewById(R.id.findFriends_button);
         changeSecretsPass = findViewById(R.id.secret_passcode_button);
         fab = findViewById(R.id.fab);
+        todayDate = findViewById(R.id.todaysDate);
 
         //Saving from authentication to the database
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -117,6 +123,12 @@ public class Account extends AppCompatActivity {
             }
         });
 
+        Calendar calendar = Calendar.getInstance();
+        Date currentDate = calendar.getTime();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("d'" + getDaySuffix(calendar.get(Calendar.DAY_OF_MONTH)) + "' 'of' MMMM yyyy");
+        String formattedDate = simpleDateFormat.format(currentDate);
+        todayDate.setText(formattedDate);
+
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setSelectedItemId(R.id.account);
 
@@ -145,5 +157,22 @@ public class Account extends AppCompatActivity {
             startActivity(new Intent(getApplicationContext(), Adding.class));
             finish();
         });
+    }
+
+    private String getDaySuffix(int day) {
+        switch (day) {
+            case 1:
+            case 21:
+            case 31:
+                return "st";
+            case 2:
+            case 22:
+                return "nd";
+            case 3:
+            case 23:
+                return "rd";
+            default:
+                return "th";
+        }
     }
 }

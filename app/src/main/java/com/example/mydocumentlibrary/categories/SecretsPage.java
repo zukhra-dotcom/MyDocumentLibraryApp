@@ -88,6 +88,13 @@ public class SecretsPage extends AppCompatActivity{ //changed to LockActivity
 
         selectPDF = findViewById(R.id.selectFile);
         uploadPDF = findViewById(R.id.uploadFile);
+        writeNote = findViewById(R.id.writeNoteFile);
+        writeOriginal = findViewById(R.id.originalFile);
+        createDeadline = findViewById(R.id.createDeadlineFile);
+        showDeadlineText = findViewById(R.id.showDeadlineText);
+        permissionSwitch = findViewById(R.id.permissionSwitchFile);
+        cameraScanButton = findViewById(R.id.camera_scan);
+        scanImageView = findViewById(R.id.scannedImageView);
         storageReference = FirebaseStorage.getInstance().getReference();
         databaseReference = FirebaseDatabase.getInstance().getReference("uploadSecrets/");
 //        uploadPDF.setEnabled(false);

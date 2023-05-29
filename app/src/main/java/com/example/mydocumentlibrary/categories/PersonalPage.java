@@ -58,6 +58,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
+
 public class PersonalPage extends AppCompatActivity {
 
     private static final int PERMISSION_CODE = 1000;
@@ -184,7 +186,7 @@ public class PersonalPage extends AppCompatActivity {
                             if (selectedCalendar.before(calendar)) {
                                 Toast.makeText(PersonalPage.this, "Please select a date on or after today", Toast.LENGTH_SHORT).show();
                             } else {
-                                showDeadlineText.setText(dayOfMonth + "." + month + "." + year);
+                                showDeadlineText.setText(new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault()).format(selectedCalendar.getTime()));
                             }
                         }
                     }, y, m, d);
@@ -204,11 +206,6 @@ public class PersonalPage extends AppCompatActivity {
             });
         }
 
-
-
-
-
-
         if (requestCode == IMAGE_CAPTURE_CODE && resultCode == RESULT_OK) {
             // Get the captured image
             scanImageView.setVisibility(View.VISIBLE);
@@ -218,61 +215,79 @@ public class PersonalPage extends AppCompatActivity {
             // Start the cropping activity
             CropImage.activity(imageUri)
                     .start(this);
+        }
 
-            // Display the captured image in the ImageView
-            ImageView scannedImageView = findViewById(R.id.scannedImageView);
-            scannedImageView.setImageBitmap(imageBitmap);
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                // Get the cropped image URI
+                Uri croppedImageUri = result.getUri();
 
-            // Convert the image to a byte array
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            byte[] imageData = baos.toByteArray();
+                // Display the cropped image in the ImageView
+                ImageView scannedImageView = findViewById(R.id.scannedImageView);
+                scannedImageView.setImageURI(croppedImageUri);
 
-            // Upload the image to Firebase Storage
-            StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-            String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            String imageName = "personal_" + System.currentTimeMillis() + ".jpg";
-            StorageReference imageRef = storageReference.child("personal/" + uid + "/" + imageName);
-            imageRef.putBytes(imageData)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            // Retrieve the download URL of the uploaded image
-                            imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    // Save the image URL in the Firebase Realtime Database
-                                    String key = databaseReference.child(uid).push().getKey();
-                                    String imageURL = uri.toString();
-                                    databaseReference.child(uid).child(key).child("url").setValue(imageURL);
-                                    // Perform additional processing or save other data related to the scanned image
-                                    String createdDate = getCurrentDateTime();
-                                    String deadlineDate = showDeadlineText.getText().toString();
-                                    String name = "scanned" + key;
-                                    String notes = writeNote.getText().toString();
-                                    String originalDoc = writeOriginal.getText().toString();
-                                    boolean permissionForFriends = permissionSwitch.isChecked();
+                // Convert the cropped image to a byte array
+                Bitmap croppedImageBitmap = null;
+                try {
+                    croppedImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), croppedImageUri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                croppedImageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                byte[] imageData = baos.toByteArray();
 
-                                    HashMap<String, Object> documentData = new HashMap<>();
-                                    documentData.put("createdDate", createdDate);
-                                    documentData.put("deadlineDate", deadlineDate);
-                                    documentData.put("name", name);
-                                    documentData.put("notes", notes);
-                                    documentData.put("originalDoc", originalDoc);
-                                    documentData.put("permissionForFriends", permissionForFriends);
-                                    documentData.put("url", imageURL);
+                // Upload the cropped image to Firebase Storage
+                StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+                String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                String imageName = "personal_" + System.currentTimeMillis() + ".jpeg";
+                StorageReference imageRef = storageReference.child("personal/" + uid + "/" + imageName);
+                imageRef.putBytes(imageData)
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                // Retrieve the download URL of the uploaded image
+                                imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                        // Save the image URL in the Firebase Realtime Database
+                                        String key = databaseReference.child(uid).push().getKey();
+                                        String imageURL = uri.toString();
+                                        databaseReference.child(uid).child(key).child("url").setValue(imageURL);
+                                        // Perform additional processing or save other data related to the scanned image
+                                        String createdDate = getCurrentDateTime();
+                                        String deadlineDate = showDeadlineText.getText().toString();
+                                        String name = "scanned" + key;
+                                        String notes = writeNote.getText().toString();
+                                        String originalDoc = writeOriginal.getText().toString();
+                                        boolean permissionForFriends = permissionSwitch.isChecked();
 
-                                    databaseReference.child(uid).child(key).setValue(documentData);
-                                    Toast.makeText(PersonalPage.this, "Scanned document uploaded to the storage", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
-                    });
+                                        HashMap<String, Object> documentData = new HashMap<>();
+                                        documentData.put("createdDate", createdDate);
+                                        documentData.put("deadlineDate", deadlineDate);
+                                        documentData.put("name", name);
+                                        documentData.put("notes", notes);
+                                        documentData.put("originalDoc", originalDoc);
+                                        documentData.put("permissionForFriends", permissionForFriends);
+                                        documentData.put("url", imageURL);
+
+                                        databaseReference.child(uid).child(key).setValue(documentData);
+                                        Toast.makeText(PersonalPage.this, "Scanned document uploaded to the storage", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        });
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+                // Handle crop error
+                Toast.makeText(getApplicationContext(), "Crop failed: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
     private String getCurrentDateTime() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
         Date currentDate = new Date();
         return dateFormat.format(currentDate);
     }
@@ -296,7 +311,8 @@ public class PersonalPage extends AppCompatActivity {
 
                         //While uploading new file identify uploadDate
                         Date date = new Date();
-                        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+                        //SimpleDateFormat formatter = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
+                        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH:mm");
                         String strDate = formatter.format(date);
 
                         permissionSwitch.setEnabled(true);
